@@ -2016,13 +2016,13 @@ export default function App() {
       <CustomCursor />
       <FloatingToolkit />
       
-      <nav className={`fixed w-full z-[100] transition-all duration-700 px-[1vw] py-6 2xl:py-8 ${scrolled || currentPage !== 'home' ? 'bg-[#050505]/95 backdrop-blur-md border-b border-white/5 py-4 2xl:py-6' : ''}`}>
+      <nav className={`fixed w-full z-[100] transition-all duration-700 px-[1vw] py-5 2xl:py-6 ${scrolled || currentPage !== 'home' ? 'bg-[#050505]/95 backdrop-blur-md border-b border-white/5 py-3 2xl:py-4' : ''}`}>
         <div className="w-full flex justify-between items-center text-white">
           <div className="interactive z-50 flex items-center cursor-none" onClick={() => navigateTo('home')}>
             <img 
               src="https://static.wixstatic.com/media/745981_5cb5b3705132499081e24b12f5f4b3d4~mv2.png" 
               alt="Events & Pro Logo" 
-              className="h-[69px] md:h-[99px] 2xl:h-[112px] object-contain invert brightness-0 hover:opacity-70 transition-opacity" 
+              className="h-[34px] md:h-[48px] 2xl:h-[55px] object-contain invert brightness-0 hover:opacity-70 transition-opacity" 
             />
           </div>
           <div className="hidden lg:flex items-center space-x-12 2xl:space-x-16">
