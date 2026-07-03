@@ -1202,14 +1202,14 @@ const Metrics = () => {
 const AboutPage = () => {
   return (
     <div className="animate-fade-in pt-32 lg:pt-48 bg-[#050505] w-full">
-      <section className="px-[3vw] w-full pb-32">
+      <section className="px-[3vw] w-full pb-32 border-b border-white/5">
         <p className="font-sans text-[9px] 2xl:text-[11px] tracking-[0.4em] uppercase text-white/40 mb-8">Our Story</p>
         <h1 className="text-5xl md:text-7xl lg:text-8xl 2xl:text-9xl font-wide font-extralight uppercase tracking-[0.05em] text-white leading-[1.1]">
           Designing <br/> <span className="text-transparent custom-stroke-text font-normal">Legacy.</span>
         </h1>
       </section>
-      <Vision />
       <OurGenesis />
+      <Vision />
       <CoreEthos />
       <DirectorProfileRedesigned />
       <TeamSection />
@@ -1811,13 +1811,19 @@ const ContactPage = () => {
 
   return (
     <div className="animate-fade-in pt-32 lg:pt-48 bg-[#050505] min-h-screen flex flex-col w-full">
-      <section className="px-[3vw] w-full pb-32 border-b border-white/5">
+      
+      {/* Hero Section matching other pages */}
+      <section className="px-[3vw] w-full pb-24 border-b border-white/5">
+        <p className="font-sans text-[9px] 2xl:text-[11px] tracking-[0.4em] uppercase text-white/40 mb-8">Initialize Sequence</p>
+        <h1 className="text-5xl md:text-7xl lg:text-8xl 2xl:text-9xl font-wide font-extralight uppercase tracking-[0.05em] text-white leading-[1.1]">
+          Connect. <br/> <span className="text-transparent custom-stroke-text font-normal">The Vision.</span>
+        </h1>
+      </section>
+
+      {/* Form and Details Section */}
+      <section className="px-[3vw] py-24 2xl:py-32 w-full border-b border-white/5">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 xl:gap-20">
-          <div className="lg:col-span-6 xl:col-span-5">
-            <p className="font-sans text-[9px] 2xl:text-[11px] tracking-[0.4em] uppercase text-white/40 mb-8">Initialize Sequence</p>
-            <h1 className="text-5xl md:text-7xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-wide font-extralight uppercase tracking-[0.05em] text-white leading-[1.1] mb-12">
-              Connect.<br/><span className="text-transparent custom-stroke-text font-normal whitespace-nowrap">The Vision.</span>
-            </h1>
+          <div className="lg:col-span-5">
             <div className="space-y-12">
               <div>
                  <p className="font-sans text-[9px] tracking-[0.3em] uppercase text-white/40 mb-3 border-b border-white/10 inline-block pb-2">Direct Line</p>
@@ -1831,7 +1837,7 @@ const ContactPage = () => {
               </div>
             </div>
           </div>
-          <div className="lg:col-span-6 xl:col-span-7 lg:pl-8 xl:pl-16">
+          <div className="lg:col-span-7 lg:pl-8 xl:pl-16">
             <form className="flex flex-col gap-12 mt-8 lg:mt-0" onSubmit={(e) => e.preventDefault()}>
               <div className="flex flex-col gap-2">
                 <label className="font-sans text-[9px] tracking-[0.3em] uppercase text-white/40 pl-2">Full Name</label>
