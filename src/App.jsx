@@ -1042,8 +1042,8 @@ const DirectorProfileRedesigned = () => {
               <p>We believe that the finest summits are not merely attended—they are profoundly felt. The true signature of this work lies in the invisible orchestration of perfection.</p>
             </div>
             <div className="mt-16 pt-8 border-t border-white/10 inline-block w-fit">
-              <p className="text-white font-sans tracking-[0.3em] uppercase text-xs 2xl:text-sm font-semibold">Leadership</p>
-              <p className="text-white/40 font-sans text-[9px] 2xl:text-[10px] tracking-[0.4em] uppercase mt-2">Events & Pro.</p>
+              <p className="text-white font-sans tracking-[0.3em] uppercase text-xs 2xl:text-sm font-semibold">Jayant Mehta</p>
+              <p className="text-white/40 font-sans text-[9px] 2xl:text-[10px] tracking-[0.4em] uppercase mt-2">Founder - Events & Pro.</p>
             </div>
           </div>
 
@@ -1089,9 +1089,9 @@ const TeamSection = () => {
   );
 
   return (
-    <section className="py-32 2xl:py-48 bg-[#0a0a0a] px-[3vw] pb-48 w-full border-b border-white/5">
+    <section className="py-32 2xl:py-48 bg-[#0a0a0a] overflow-hidden border-b border-white/5 w-full">
       <div ref={ref} className={`w-full transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
-        <div className="text-center mb-20 md:mb-32">
+        <div className="text-center mb-20 md:mb-32 px-[3vw]">
           <p className="font-sans text-[9px] 2xl:text-[11px] tracking-[0.4em] uppercase text-white/40 mb-6">The Collective</p>
           <h2 className="text-4xl md:text-6xl 2xl:text-7xl font-wide font-extralight uppercase tracking-[0.05em] text-white leading-[1.1]">
             Architects of <span className="text-transparent custom-stroke-text font-normal">the Magic.</span>
@@ -1121,6 +1121,79 @@ const TeamSection = () => {
           </div>
         </div>
 
+      </div>
+    </section>
+  );
+};
+
+const GlobalNodes = () => {
+  const [ref, isVisible] = useScrollReveal();
+  const nodes = [
+    { city: "Pune", type: "Headquarters", email: "info@eventsandpro.com" },
+    { city: "Mumbai", type: "Corporate Division", email: "info@eventsandpro.com" },
+    { city: "Delhi-NCR", type: "MICE Division", email: "info@eventsandpro.com" },
+    { city: "London", type: "European Operations", email: "info@eventsandpro.com" }
+  ];
+
+  return (
+    <section className="py-24 2xl:py-32 px-[3vw] bg-[#0a0a0a] border-b border-white/5">
+      <div ref={ref} className={`w-full transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
+        <div className="text-center mb-20">
+          <p className="font-sans text-[9px] 2xl:text-[11px] tracking-[0.4em] uppercase text-white/40 mb-6">Global Portfolio</p>
+          <h2 className="text-3xl md:text-5xl 2xl:text-6xl font-wide font-extralight uppercase tracking-[0.05em] text-white leading-[1.1]">
+            Strategic <span className="text-transparent custom-stroke-text font-normal">Nodes.</span>
+          </h2>
+        </div>
+        <GlobalMap />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 2xl:gap-12">
+          {nodes.map((node, i) => (
+            <div key={i} className="p-10 border border-white/10 rounded-2xl hover:border-white/30 transition-colors duration-500 interactive group bg-[#050505]">
+              <h3 className="text-2xl 2xl:text-3xl font-wide font-extralight uppercase tracking-[0.1em] text-white mb-2">{node.city}</h3>
+              <p className="font-sans text-[9px] 2xl:text-[10px] tracking-[0.3em] uppercase text-white/40 mb-8">{node.type}</p>
+              <p className="font-sans text-[10px] 2xl:text-xs tracking-[0.1em] text-white/70 group-hover:text-white transition-colors">{node.email}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const Vision = () => {
+  const [ref, isVisible] = useScrollReveal();
+  return (
+    <section className="py-40 md:py-56 2xl:py-72 bg-[#050505] px-[3vw] border-y border-white/5 relative overflow-hidden">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50vw] h-[50vw] bg-white/[0.02] rounded-full blur-[100px] pointer-events-none"></div>
+      <div ref={ref} className={`max-w-4xl 2xl:max-w-6xl mx-auto text-center transition-all duration-1000 ease-out relative z-10 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
+        <p className="font-sans text-[9px] 2xl:text-[11px] tracking-[0.4em] uppercase text-white/40 mb-12">The Philosophy</p>
+        <h2 className="text-3xl md:text-5xl lg:text-6xl 2xl:text-7xl font-wide font-extralight uppercase tracking-[0.08em] leading-[1.3] text-white/80">
+          "Unlocking the future: Celebrating innovation and collaboration to shape a sustainable tomorrow through <span className="text-white font-normal italic">Events & Pro</span>."
+        </h2>
+      </div>
+    </section>
+  );
+};
+
+const Metrics = () => {
+  const [ref, isVisible] = useScrollReveal();
+  const stats = [
+    { num: "280+", label: "Events Completed" },
+    { num: "244+", label: "Satisfied Clients" },
+    { num: "97+", label: "Respected Vendors" },
+    { num: "100%", label: "Corporate Delivery" }
+  ];
+
+  return (
+    <section className="bg-[#050505] border-y border-white/5 px-[3vw] py-32 2xl:py-48">
+      <div ref={ref} className={`w-full transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-white/10 border border-white/10 rounded-2xl overflow-hidden">
+          {stats.map((stat, i) => (
+            <div key={i} className="bg-[#0a0a0a] py-16 px-8 flex flex-col items-center justify-center text-center group interactive hover:bg-[#0d0d0d] transition-colors duration-500">
+              <span className="text-4xl md:text-6xl 2xl:text-7xl font-wide font-extralight text-white mb-4 tracking-[0.05em] group-hover:scale-110 transition-transform duration-700">{stat.num}</span>
+              <span className="font-sans text-[9px] 2xl:text-[10px] tracking-[0.3em] uppercase text-white/50">{stat.label}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
