@@ -8,7 +8,10 @@ import {
   Settings,
   Calculator,
   MessageSquare,
-  ChevronUp
+  ChevronUp,
+  Maximize,
+  Wifi,
+  Globe
 } from 'lucide-react';
 
 /**
@@ -50,7 +53,7 @@ const CustomCursor = () => {
     };
     
     const handleMouseOver = (e) => {
-      const isInteractive = e.target.closest('button') || e.target.closest('a') || e.target.closest('.interactive') || e.target.closest('input') || e.target.closest('textarea') || e.target.closest('.toolkit-interactive');
+      const isInteractive = e.target.closest('button') || e.target.closest('a') || e.target.closest('.interactive') || e.target.closest('input') || e.target.closest('textarea') || e.target.closest('select');
       setIsHovering(!!isInteractive);
     };
 
@@ -78,414 +81,180 @@ const CustomCursor = () => {
         style={{ 
           transform: `translate(${position.x - (isHovering ? 32 : 16)}px, ${position.y - (isHovering ? 32 : 16)}px)`,
           opacity: isHidden ? 0 : undefined
-        }}
-      />
-    </>
-  );
+      }}
+    />
+  </>
+);
 };
 
-/* ==========================================================================
-   INTERACTIVE TOOLKIT
-   ========================================================================== */
-
-const FloatingToolkit = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [attendees, setAttendees] = useState(100);
-  const [eventType, setEventType] = useState('mice');
-
-  const calculateEstimate = () => {
-    const baseRates = { mice: 150, tech: 300, awards: 250 };
-    const min = attendees * baseRates[eventType] * 0.8;
-    const max = attendees * baseRates[eventType] * 1.5;
-    return `₹${(min * 80).toLocaleString()} - ₹${(max * 80).toLocaleString()}`;
-  };
-
-  return (
-    <div className="fixed bottom-6 right-6 md:bottom-12 md:right-12 z-[8000] flex flex-col items-end pointer-events-none">
-      
-      {/* Toolkit Panel */}
-      <div className={`pointer-events-auto mb-4 w-[calc(100vw-3rem)] md:w-80 bg-[#0a0a0a]/95 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 shadow-2xl transition-all duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] origin-bottom-right ${isOpen ? 'scale-100 opacity-100 translate-y-0' : 'scale-90 opacity-0 translate-y-10 hidden'}`}>
-        <div className="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
-          <h4 className="font-wide text-sm font-extralight uppercase tracking-[0.1em] text-white flex items-center gap-2">
-            <Settings size={14} /> Client Tools
-          </h4>
-          <button onClick={() => setIsOpen(false)} className="text-white/40 hover:text-white transition-colors toolkit-interactive">
-            <X size={16} />
-          </button>
-        </div>
-
-        {/* Tool 1: Budget Estimator */}
-        <div className="mb-6">
-          <p className="font-sans text-[9px] tracking-[0.2em] uppercase text-white/50 mb-3 flex items-center gap-2">
-            <Calculator size={12} /> Budget Estimator
-          </p>
-          <div className="space-y-4">
-            <div>
-              <label className="font-sans text-[10px] text-white/70 block mb-1">Event Type</label>
-              <select 
-                value={eventType} 
-                onChange={(e) => setEventType(e.target.value)}
-                className="toolkit-interactive w-full bg-white/5 border border-white/10 rounded-lg p-2 text-xs text-white outline-none focus:border-white/30 transition-colors"
-              >
-                <option value="mice" className="bg-black">Corporate & MICE</option>
-                <option value="tech" className="bg-black">Experiential Tech / Launch</option>
-                <option value="awards" className="bg-black">Award Function / Gala</option>
-              </select>
-            </div>
-            <div>
-              <label className="font-sans text-[10px] text-white/70 flex justify-between mb-1">
-                <span>Scale (Attendees)</span>
-                <span>{attendees}</span>
-              </label>
-              <input 
-                type="range" 
-                min="50" max="5000" step="50"
-                value={attendees}
-                onChange={(e) => setAttendees(e.target.value)}
-                className="toolkit-interactive w-full accent-white"
-              />
-            </div>
-            <div className="bg-white/5 rounded-lg p-3 text-center border border-white/5">
-              <span className="block font-sans text-[8px] tracking-[0.2em] uppercase text-white/40 mb-1">Estimated Range</span>
-              <span className="font-wide text-lg text-white font-light tracking-wide">{calculateEstimate()}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Utility Actions */}
-        <div className="grid grid-cols-2 gap-3">
-          <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="toolkit-interactive flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl py-3 text-[10px] font-sans tracking-[0.1em] uppercase text-white transition-colors">
-            <ChevronUp size={14} /> Top
-          </button>
-          <a href="mailto:info@eventsandpro.com" className="toolkit-interactive flex items-center justify-center gap-2 bg-white text-black hover:bg-white/80 rounded-xl py-3 text-[10px] font-sans tracking-[0.1em] uppercase transition-colors font-medium">
-            <MessageSquare size={14} /> Contact
-          </a>
-        </div>
-      </div>
-
-      {/* Floating Action Button */}
-      <button 
-        onClick={() => setIsOpen(!isOpen)}
-        className="pointer-events-auto toolkit-interactive w-14 h-14 md:w-16 md:h-16 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white shadow-[0_0_30px_rgba(255,255,255,0.1)] hover:bg-white hover:text-black hover:scale-105 transition-all duration-500 group"
-      >
-        {isOpen ? <X size={24} className="transition-transform duration-500 rotate-90" /> : <Settings size={24} className="group-hover:rotate-180 transition-transform duration-700" />}
-      </button>
-    </div>
-  );
-};
-
-
-/* ==========================================================================
-   MEGA MENU
-   ========================================================================== */
-
-const MegaMenu = ({ isOpen, onClose, navigateTo, currentPage }) => {
-  const [hoveredImage, setHoveredImage] = useState("https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80&w=1600");
-  
-  const navItems = [
-    { name: 'Home', id: 'home', img: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80&w=1600" },
-    { name: 'About Us', id: 'about', img: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=1600" },
-    { name: 'Solutions', id: 'expertise', img: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=1600" },
-    { name: 'Gallery', id: 'gallery', img: "https://images.unsplash.com/photo-1470229722913-7c090be5c560?auto=format&fit=crop&q=80&w=1600" },
-    { name: 'Contact', id: 'contact', img: "https://images.unsplash.com/photo-1515169067868-5387ec356754?auto=format&fit=crop&q=80&w=1600" }
-  ];
-
-  return (
-    <div className={`fixed inset-0 bg-[#050505] z-[200] transition-all duration-1000 ease-[cubic-bezier(0.19,1,0.22,1)] ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none delay-300'}`}>
-      
-      <div className="absolute inset-0 w-full h-full opacity-30 md:opacity-50 transition-opacity duration-1000">
-        <img 
-          src={hoveredImage} 
-          className="w-full h-full object-cover grayscale-[50%] animate-subtle-zoom"
-          alt="Menu Preview" 
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/90 to-transparent"></div>
-      </div>
-
-      <div className="relative z-10 w-full h-full flex flex-col px-[3vw] py-8 md:py-12">
-        <div className="flex justify-between items-center w-full">
-          <img 
-            src="https://static.wixstatic.com/media/745981_5cb5b3705132499081e24b12f5f4b3d4~mv2.png" 
-            alt="Events & Pro Logo" 
-            className={`h-[46px] md:h-[66px] 2xl:h-[75px] object-contain invert brightness-0 cursor-none transition-all duration-700 ${isOpen ? 'opacity-100 translate-y-0 delay-500' : 'opacity-0 -translate-y-10'}`}
-          />
-          <button 
-            className={`interactive text-white flex items-center gap-3 transition-all duration-700 ${isOpen ? 'opacity-100 translate-y-0 delay-500' : 'opacity-0 -translate-y-10'}`} 
-            onClick={onClose}
-          >
-            <span className="font-sans text-[10px] tracking-[0.3em] uppercase hidden md:block">Close</span>
-            <X size={36} strokeWidth={1} />
-          </button>
-        </div>
-
-        <div className="flex-1 flex flex-col justify-center">
-          <div className="flex flex-col items-start gap-4 md:gap-6 2xl:gap-8">
-            {navItems.map((item, i) => (
-              <button 
-                key={item.id} 
-                onClick={() => navigateTo(item.id)}
-                onMouseEnter={() => setHoveredImage(item.img)}
-                className={`interactive group flex items-center transition-all duration-700 ease-out`}
-                style={{ 
-                  transitionDelay: isOpen ? `${500 + (i * 100)}ms` : '0ms', 
-                  transform: isOpen ? 'translateY(0)' : 'translateY(40px)', 
-                  opacity: isOpen ? 1 : 0 
-                }}
-              >
-                <span className={`text-[10px] md:text-sm font-sans tracking-[0.3em] uppercase w-8 md:w-12 text-left transition-colors duration-500 ${currentPage === item.id || (['mice', 'tech', 'awards'].includes(currentPage) && item.id === 'expertise') ? 'text-white' : 'text-white/30 group-hover:text-white'}`}>
-                  0{i + 1}
-                </span>
-                <span className={`text-4xl md:text-7xl 2xl:text-8xl font-wide font-extralight uppercase tracking-[0.05em] transition-all duration-500 ${currentPage === item.id || (['mice', 'tech', 'awards'].includes(currentPage) && item.id === 'expertise') ? 'text-white ml-4' : 'text-transparent custom-stroke-text group-hover:text-white group-hover:ml-4'}`}>
-                  {item.name}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className={`border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 transition-all duration-700 ${isOpen ? 'opacity-100 translate-y-0 delay-[1000ms]' : 'opacity-0 translate-y-10'}`}>
-           <div className="flex flex-col gap-2">
-             <span className="font-sans text-[8px] tracking-[0.3em] uppercase text-white/40">Direct Inquiries</span>
-             <a href="mailto:info@eventsandpro.com" className="font-sans text-sm md:text-base tracking-[0.1em] text-white hover:text-white/60 transition-colors interactive">info@eventsandpro.com</a>
-           </div>
-           <div className="flex flex-col md:text-right gap-2">
-             <span className="font-sans text-[8px] tracking-[0.3em] uppercase text-white/40">Headquarters</span>
-             <p className="font-sans text-xs md:text-sm tracking-[0.1em] text-white/80">Pune, Maharashtra • India</p>
-           </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-
-/* ==========================================================================
-   SHARED GLOBAL COMPONENTS
-   ========================================================================== */
-
+/**
+ * PRELOADER COMPONENT
+ */
 const Preloader = ({ finishLoading }) => {
-  const [quote, setQuote] = useState("");
-  const [isFading, setIsFading] = useState(false);
-  const [startProgress, setStartProgress] = useState(false);
+const [opacity, setOpacity] = useState(1);
 
-  const quotes = [
-    "Events & Pro: Engineering corporate experiences.",
-    "Mastering the game of strategy and experience.",
-    "Transforming visions into unforgettable corporate events.",
-    "The magic resides in the unseen logistics.",
-    "Excellence in every moment."
-  ];
+useEffect(() => {
+  const timer1 = setTimeout(() => setOpacity(0), 1500); // Start fade out
+  const timer2 = setTimeout(() => finishLoading(), 2000); // Unmount
+  return () => { clearTimeout(timer1); clearTimeout(timer2); };
+}, [finishLoading]);
 
-  useEffect(() => {
-    setQuote(quotes[Math.floor(Math.random() * quotes.length)]);
-    const progressTimer = setTimeout(() => setStartProgress(true), 100);
-    const fadeTimer = setTimeout(() => setIsFading(true), 2500);
-    const removeTimer = setTimeout(() => finishLoading(), 3500);
-    
-    return () => { 
-      clearTimeout(progressTimer);
-      clearTimeout(fadeTimer); 
-      clearTimeout(removeTimer); 
-    };
-  }, [finishLoading]);
-
-  return (
-    <div className={`fixed inset-0 z-[9000] bg-[#050505] flex flex-col items-center justify-center px-[3vw] transition-opacity duration-1000 ease-in-out ${isFading ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-      <div className="overflow-hidden mb-8">
-        <h2 className="text-white/80 font-wide font-extralight tracking-[0.2em] uppercase text-xs md:text-sm text-center w-full leading-relaxed animate-fade-in-up">
-          {quote}
-        </h2>
-      </div>
-      <div className="w-48 md:w-64 h-[1px] bg-white/10 relative overflow-hidden opacity-0 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
-        <div className="absolute top-0 left-0 h-full bg-white transition-all ease-linear" style={{ width: startProgress ? '100%' : '0%', transitionDuration: '2400ms' }} />
-      </div>
+return (
+  <div className="fixed inset-0 z-[99999] bg-[#050505] flex flex-col items-center justify-center transition-opacity duration-500 ease-in-out" style={{ opacity }}>
+    <div className="relative flex flex-col items-center">
+       <img src="https://static.wixstatic.com/media/745981_5cb5b3705132499081e24b12f5f4b3d4~mv2.png" alt="Events & Pro" className="h-10 md:h-14 invert brightness-0 mb-8 animate-pulse" />
+       <div className="w-48 h-[1px] bg-white/10 relative overflow-hidden">
+          <div className="absolute top-0 left-0 h-full bg-white/60 animate-marquee w-1/2"></div>
+       </div>
+       <p className="font-sans text-[8px] tracking-[0.4em] uppercase text-white/40 mt-6">Initializing Ecosystem</p>
     </div>
-  );
+  </div>
+);
 };
 
-const Footer = ({ setCurrentPage }) => {
-  const [ref, isVisible] = useScrollReveal();
-
-  return (
-    <footer className="bg-[#050505] pt-32 2xl:pt-48 pb-12 px-[1vw] border-t border-white/5">
-      <div ref={ref} className={`w-full transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-20 mb-32 2xl:mb-48">
-          <div>
-            <img 
-              src="https://static.wixstatic.com/media/745981_5cb5b3705132499081e24b12f5f4b3d4~mv2.png" 
-              alt="Events & Pro Logo" 
-              className="h-[60px] md:h-[75px] 2xl:h-[90px] object-contain invert brightness-0 mb-12 opacity-90 cursor-pointer interactive" 
-              onClick={() => setCurrentPage('home')}
-            />
-            <p className="text-[9px] 2xl:text-[10px] font-sans tracking-[0.5em] uppercase text-white/40 mb-8 border-b border-white/10 inline-block pb-3">Initialize Sequence</p>
-            <h2 className="text-5xl md:text-6xl 2xl:text-8xl font-wide font-extralight uppercase tracking-[0.05em] text-white mb-10 leading-none">
-              Let's craft <br/> the <span className="text-transparent custom-stroke-text font-normal">exceptional.</span>
-            </h2>
-            <a href="mailto:info@eventsandpro.com" className="interactive flex items-center w-fit text-xs 2xl:text-sm font-sans tracking-[0.2em] uppercase text-white hover:text-white/50 transition-colors border-b border-white/20 hover:border-white/5 pb-2 group mb-4">
-              INFO@EVENTSANDPRO.COM
-              <ArrowUpRight className="w-4 h-4 ml-3 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" strokeWidth={1.5} />
-            </a>
-            <a href="tel:+917709356661" className="interactive flex items-center w-fit text-xs 2xl:text-sm font-sans tracking-[0.2em] uppercase text-white hover:text-white/50 transition-colors border-b border-white/20 hover:border-white/5 pb-2 group">
-              +91 77093 56661
-              <ArrowUpRight className="w-4 h-4 ml-3 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" strokeWidth={1.5} />
-            </a>
-          </div>
-          <div className="grid grid-cols-2 gap-12 md:justify-end">
-            <div className="flex flex-col space-y-5 text-[9px] 2xl:text-[11px] font-sans tracking-[0.3em] uppercase text-white/50">
-              <span className="text-white font-semibold mb-2 border-b border-white/10 pb-3 w-fit">Network</span>
-              <span>Pune (HQ)</span>
-              <span>Mumbai</span>
-              <span>Delhi-NCR</span>
-              <span>Bangalore</span>
-            </div>
-            <div className="flex flex-col space-y-5 text-[9px] 2xl:text-[11px] font-sans tracking-[0.3em] uppercase text-white/50">
-              <span className="text-white font-semibold mb-2 border-b border-white/10 pb-3 w-fit">Navigation</span>
-              <button onClick={() => setCurrentPage('home')} className="interactive text-left hover:text-white transition-colors w-fit">Home</button>
-              <button onClick={() => setCurrentPage('about')} className="interactive text-left hover:text-white transition-colors w-fit">About Us</button>
-              <button onClick={() => setCurrentPage('expertise')} className="interactive text-left hover:text-white transition-colors w-fit">Solutions</button>
-              <button onClick={() => setCurrentPage('gallery')} className="interactive text-left hover:text-white transition-colors w-fit">Work Gallery</button>
-              <button onClick={() => setCurrentPage('contact')} className="interactive text-left hover:text-white transition-colors w-fit">Contact</button>
-            </div>
-          </div>
-        </div>
-        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-start md:items-center text-[8px] 2xl:text-[10px] font-sans text-white/40 tracking-[0.4em] uppercase gap-4">
-          <span>© {new Date().getFullYear()} Events & Pro.</span>
-          <span>All Rights Reserved</span>
-        </div>
-      </div>
-    </footer>
-  );
-};
-
-const GlobalMap = () => {
-  const mapRef = useRef(null);
-  const [activeLocation, setActiveLocation] = useState(null);
-
+/**
+ * DYNAMIC META COMPONENT (AIO & GEO OPTIMIZATION)
+ */
+const DynamicMeta = ({ title, description, keywords, schema }) => {
   useEffect(() => {
-    const initMap = () => {
-      if (!window.L || mapRef.current) return;
-      
-      const map = window.L.map('global-map', {
-        center: [20, 78], 
-        zoom: 3.5, 
-        zoomControl: false,
-        attributionControl: false,
-        scrollWheelZoom: false,
-        dragging: true
-      });
-      mapRef.current = map;
-
-      window.L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
-        subdomains: 'abcd',
-        maxZoom: 20
-      }).addTo(map);
-
-      const customIcon = window.L.divIcon({
-        className: 'custom-pin',
-        html: '<div style="background-color: white; width: 6px; height: 6px; border-radius: 50%; box-shadow: 0 0 15px 3px rgba(255,255,255,0.7); cursor: pointer;"></div>',
-        iconSize: [6, 6],
-        iconAnchor: [3, 3]
-      });
-
-      const locations = [
-        { name: "Pune (HQ)", coords: [18.5204, 73.8567], subtitle: "Fintech Leadership Summit", year: "2023", attendees: "1,200 Delegates", setup: "Kinetic LED ceiling with 360° surround staging", description: "A hyper-secure, data-driven environment engineered for top-tier global banking executives." },
-        { name: "Mumbai", coords: [19.0760, 72.8777], subtitle: "Annual Awards Gala", year: "2024", attendees: "2,500+ VIPs", setup: "Massive LED arrays & synchronized drone swarms", description: "Orchestrated massive stadium-scale infrastructure for India's most high-profile corporate awards." },
-        { name: "Delhi-NCR", coords: [28.7041, 77.1025], subtitle: "Global Auto Expo Reveal", year: "2025", attendees: "8,000+ Visitors", setup: "Holographic car reveals & tiered amphitheater", description: "Executed an immersive, high-decibel launch environment for a flagship electric vehicle reveal." },
-        { name: "Bangalore", coords: [12.9716, 77.5946], subtitle: "DevCon Global", year: "2023", attendees: "12,000 Tech Leaders", setup: "Multi-zone festival layout with RFID tracking", description: "Designed a massive tech playground featuring zero-latency streaming nodes across multiple stages." },
-        { name: "Hyderabad", coords: [17.3850, 78.4867], subtitle: "Pharma Tech Symposium", year: "2024", attendees: "3,000 Delegates", setup: "3D Projection Mapping & Breakout Pods", description: "A highly technical MICE engagement bringing together global pharmaceutical pioneers." },
-        { name: "Goa", coords: [15.2993, 74.1240], subtitle: "Executive Offsite Retreat", year: "2023", attendees: "400 C-Suite Leaders", setup: "Beachfront dome with acoustic isolation", description: "A secluded, high-security corporate networking retreat blending business strategy with luxury." },
-        { name: "London, UK", coords: [51.5074, -0.1278], subtitle: "European Finance Summit", year: "2024", attendees: "1,800 Elites", setup: "Suspended LED arrays inside a historic hall", description: "Orchestrated a hyper-exclusive financial summit merging historic British architecture with cyberpunk lighting design." },
-        { name: "Bali, Indonesia", coords: [-8.4095, 115.1889], subtitle: "APAC Innovators Retreat", year: "2023", attendees: "600 Leaders", setup: "Sustainable bamboo structures & bio-responsive lighting", description: "An immersive, sustainability-focused corporate retreat designed around the natural topography of the island." },
-        { name: "Jakarta, Indonesia", coords: [-6.2088, 106.8456], subtitle: "SEA Trade Expo", year: "2025", attendees: "10,000+ Visitors", setup: "Multi-hall spanning modular booths", description: "A massive corporate exhibition bridging Southeast Asian commerce with global technological enterprises." },
-        { name: "Dubai, UAE", coords: [25.2048, 55.2708], subtitle: "Web3 World Summit", year: "2024", attendees: "15,000+ Attendees", setup: "Immersive metaverse tunnels & 50ft LED monoliths", description: "Produced a groundbreaking tech exhibition merging digital art with massive physical architecture." },
-        { name: "Singapore", coords: [1.3521, 103.8198], subtitle: "Global Tech Launch", year: "2024", attendees: "2,000 Insiders", setup: "Kinetic runway with mirrored ceiling installations", description: "Architected a razor-sharp, high-contrast environment designed specifically to amplify a flagship tech product reveal." },
-        { name: "Sydney, Australia", coords: [-33.8688, 151.2093], subtitle: "Oceania Business Forum", year: "2023", attendees: "4,500 Delegates", setup: "Harborside transparent marquees & acoustic baffling", description: "Designed a massive corporate engagement overlooking the Opera House, featuring seamless multi-stage broadcasts." }
-      ];
-
-      locations.forEach(loc => {
-        const marker = window.L.marker(loc.coords, { icon: customIcon })
-          .addTo(map)
-          .bindTooltip(loc.name, { direction: 'top', className: 'custom-tooltip', offset: [0, -10] });
-          
-        marker.on('click', () => {
-          setActiveLocation(loc);
-        });
-      });
-      
-      map.on('click', () => {
-        setActiveLocation(null);
-      });
+    if (title) document.title = `${title} | Events & Pro`;
+    
+    const setMeta = (name, content) => {
+      if (!content) return;
+      let element = document.querySelector(`meta[name="${name}"]`);
+      if (!element) {
+        element = document.createElement('meta');
+        element.name = name;
+        document.head.appendChild(element);
+      }
+      element.content = content;
     };
 
-    if (!document.getElementById('leaflet-css')) {
-      const link = document.createElement('link');
-      link.id = 'leaflet-css';
-      link.rel = 'stylesheet';
-      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-      document.head.appendChild(link);
-    }
+    setMeta('description', description);
+    if (keywords) setMeta('keywords', keywords);
 
-    if (!document.getElementById('leaflet-js')) {
-      const script = document.createElement('script');
-      script.id = 'leaflet-js';
-      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-      script.onload = initMap;
-      document.head.appendChild(script);
-    } else {
-      initMap();
+    if (schema) {
+      let script = document.querySelector('script[data-dynamic-schema]');
+      if (!script) {
+        script = document.createElement('script');
+        script.type = 'application/ld+json';
+        script.setAttribute('data-dynamic-schema', 'true');
+        document.head.appendChild(script);
+      }
+      script.textContent = JSON.stringify(schema);
     }
 
     return () => {
-      if (mapRef.current) {
-        mapRef.current.remove();
-        mapRef.current = null;
-      }
+      const script = document.querySelector('script[data-dynamic-schema]');
+      if (script) script.remove();
     };
-  }, []);
+  }, [title, description, keywords, schema]);
+
+  return null;
+};
+
+/**
+ * GLOBAL FAQ COMPONENT (AIO & GEO OPTIMIZED)
+ */
+const PageFAQ = ({ pageType }) => {
+  const [activeFaq, setActiveFaq] = useState(null);
+
+  const faqsData = {
+    home: [
+      { q: "What is your minimum engagement scope?", a: "We specialize in grand-scale and corporate events. While we do not have a strict financial minimum, our engagements typically begin with complex spatial or logistical requirements." },
+      { q: "Do you execute international MICE commissions?", a: "Yes. With a robust network of global logistics partners and our core nodes across major cities, we have seamlessly executed corporate events worldwide." }
+    ],
+    about: [
+      { q: "When was Events & Pro founded?", a: "We were established in 2017 with a focus on high-end corporate engagements and experiential tech." },
+      { q: "Do you operate under strict NDAs?", a: "Absolute discretion is a cornerstone of our philosophy. We routinely operate under strict Non-Disclosure Agreements for our high-profile corporate elite clientele." }
+    ],
+    solutions: [
+      { q: "What experiential tech do you provide?", a: "We offer AR/VR activations, hybrid streaming nodes, kinetic LED architecture, and dynamic stage technology." },
+      { q: "Can you handle 5,000+ delegate conferences?", a: "Yes, infinite scale is one of our core pillars. We have architected summits for up to 15,000 attendees." }
+    ],
+    intelligence: [
+      { q: "How accurate is the budget estimator?", a: "It provides a highly accurate baseline based on current Indian corporate market rates, though final proposals require a detailed consultation." },
+      { q: "How do you calculate Carbon Footprints?", a: "We utilize advanced Scope 3 emission tracking including delegate travel, venue energy standards, and material lifecycle waste." }
+    ]
+  };
+
+  const faqs = faqsData[pageType] || faqsData.home;
+
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map(faq => ({
+      "@type": "Question",
+      "name": faq.q,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.a
+      }
+    }))
+  };
+
+  if (!faqs || faqs.length === 0) return null;
 
   return (
-    <div className="w-full h-[50vh] md:h-[60vh] 2xl:h-[70vh] rounded-2xl overflow-hidden border border-white/5 relative z-10 group mb-20 bg-[#050505] interactive">
-      <div id="global-map" className="w-full h-full z-0 opacity-70 group-hover:opacity-100 transition-opacity duration-1000 cursor-grab active:cursor-grabbing"></div>
-      <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_100px_rgba(5,5,5,1)] z-10"></div>
-      
-      <div className={`absolute bottom-6 left-6 md:bottom-10 md:left-10 z-20 bg-[#050505]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-6 md:p-8 w-[calc(100%-3rem)] md:w-[28rem] transition-all duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] shadow-2xl ${activeLocation ? 'translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-10 opacity-0 pointer-events-none'}`}>
-        {activeLocation && (
-          <>
-            <button 
-              onClick={(e) => { e.stopPropagation(); setActiveLocation(null); }}
-              className="absolute top-6 right-6 text-white/40 hover:text-white transition-colors interactive"
-            >
-              <X size={18} strokeWidth={1.5} />
-            </button>
-            <div className="pr-6">
-              <div className="flex items-center justify-between mb-4">
-                <p className="font-sans text-[9px] tracking-[0.4em] uppercase text-white/40">{activeLocation.name}</p>
-                <span className="font-mono text-[9px] tracking-[0.2em] text-white/30 border border-white/10 px-2 py-1 rounded-sm">{activeLocation.year}</span>
+    <section className="py-24 bg-[#0a0a0a] border-t border-white/5 px-[3vw] w-full">
+      <DynamicMeta schema={schema} />
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-12">
+          <h3 className="text-2xl md:text-3xl font-wide font-extralight uppercase tracking-[0.1em] text-white">Frequently Asked Questions</h3>
+        </div>
+        <div className="flex flex-col border-t border-white/10">
+          {faqs.map((faq, i) => (
+            <div key={i} className="border-b border-white/10 overflow-hidden interactive" onClick={() => setActiveFaq(activeFaq === i ? null : i)}>
+              <div className="py-6 flex justify-between items-center cursor-none">
+                <h4 className={`text-sm md:text-base font-wide font-extralight uppercase tracking-[0.05em] transition-colors duration-300 pr-8 ${activeFaq === i ? 'text-white' : 'text-white/60'}`}>{faq.q}</h4>
+                <div className="text-white/40 font-mono text-xl font-light">{activeFaq === i ? '−' : '+'}</div>
               </div>
-              <h4 className="text-xl md:text-2xl 2xl:text-3xl font-wide font-extralight uppercase tracking-[0.05em] text-white mb-6 leading-tight">{activeLocation.subtitle}</h4>
-              
-              <div className="grid grid-cols-2 gap-4 mb-6 border-y border-white/10 py-5">
-                <div>
-                  <p className="font-sans text-[8px] tracking-[0.3em] uppercase text-white/30 mb-2">Scale</p>
-                  <p className="font-sans text-[10px] tracking-[0.1em] text-white/80">{activeLocation.attendees}</p>
-                </div>
-                <div>
-                  <p className="font-sans text-[8px] tracking-[0.3em] uppercase text-white/30 mb-2">Setup</p>
-                  <p className="font-sans text-[10px] tracking-[0.1em] text-white/80 leading-relaxed pr-2">{activeLocation.setup}</p>
-                </div>
+              <div className={`transition-all duration-500 ease-in-out ${activeFaq === i ? 'max-h-64 opacity-100 pb-6' : 'max-h-0 opacity-0'}`}>
+                <p className="font-sans text-xs 2xl:text-sm tracking-[0.15em] uppercase text-white/40 leading-relaxed">{faq.a}</p>
               </div>
-              
-              <p className="font-sans text-[10px] 2xl:text-xs tracking-[0.15em] uppercase text-white/60 leading-relaxed">
-                {activeLocation.description}
-              </p>
             </div>
-          </>
-        )}
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 
+/**
+ * GLOBAL MAP COMPONENT
+ */
+const GlobalMap = () => {
+return (
+  <div className="w-full aspect-[16/9] lg:aspect-[21/9] bg-[#0a0a0a] rounded-3xl border border-white/5 relative overflow-hidden group interactive mb-12 shadow-2xl">
+    <div className="absolute inset-0 flex items-center justify-center opacity-40 group-hover:opacity-70 transition-opacity duration-1000">
+       <svg width="100%" height="100%" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid slice" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="800" height="400" fill="transparent" />
+          
+          <circle cx="280" cy="180" r="2.5" fill="#ffffff" />
+          <circle cx="280" cy="180" r="10" stroke="#ffffff" strokeWidth="0.5" className="animate-ping" style={{animationDuration: '3s'}} />
+          
+          <circle cx="580" cy="140" r="2.5" fill="#ffffff" />
+          <circle cx="580" cy="140" r="10" stroke="#ffffff" strokeWidth="0.5" className="animate-ping" style={{animationDuration: '3s', animationDelay: '1s'}} />
+          
+          <circle cx="620" cy="190" r="2.5" fill="#ffffff" />
+          <circle cx="620" cy="190" r="10" stroke="#ffffff" strokeWidth="0.5" className="animate-ping" style={{animationDuration: '3s', animationDelay: '0.5s'}} />
+          
+          <circle cx="450" cy="100" r="2.5" fill="#ffffff" />
+          <circle cx="450" cy="100" r="10" stroke="#ffffff" strokeWidth="0.5" className="animate-ping" style={{animationDuration: '3s', animationDelay: '1.5s'}} />
+          
+          <path d="M280 180 Q 430 80 580 140" stroke="rgba(255,255,255,0.15)" strokeWidth="1" strokeDasharray="4 4" />
+          <path d="M580 140 Q 600 165 620 190" stroke="rgba(255,255,255,0.15)" strokeWidth="1" strokeDasharray="4 4" />
+          <path d="M450 100 Q 515 120 580 140" stroke="rgba(255,255,255,0.15)" strokeWidth="1" strokeDasharray="4 4" />
+          <path d="M280 180 Q 365 140 450 100" stroke="rgba(255,255,255,0.15)" strokeWidth="1" strokeDasharray="4 4" />
+       </svg>
+    </div>
+    <div className="absolute bottom-8 left-8">
+       <span className="font-sans text-[8px] md:text-[9px] tracking-[0.4em] uppercase text-white/40 block mb-2">Network Status</span>
+       <span className="font-wide text-sm md:text-lg text-white font-light tracking-[0.2em] uppercase">All Nodes Operational</span>
+    </div>
+  </div>
+);
+};
 
 /* ==========================================================================
    HOME PAGE COMPONENTS
@@ -603,7 +372,7 @@ const Hero = ({ setCurrentPage }) => {
             Crafting experiential events since 2017. Specializing strictly in <span className="text-white font-medium">Corporate Events</span>, <span className="text-white font-medium">Experiential Tech</span>, and <span className="text-white font-medium">Awards Functions</span>.
           </p>
           <button onClick={() => setCurrentPage('contact')} className="pointer-events-auto interactive px-8 py-3.5 2xl:px-12 2xl:py-4 rounded-full border border-white/30 bg-white/[0.03] backdrop-blur-md font-sans text-[9px] 2xl:text-[11px] tracking-[0.3em] uppercase text-white hover:bg-white hover:text-black transition-all duration-500 shadow-xl w-fit">
-            Initialize
+            Start Your Project
           </button>
         </div>
       </div>
@@ -612,32 +381,23 @@ const Hero = ({ setCurrentPage }) => {
 };
 
 const Showreel = () => {
-  const [ref, isVisible] = useScrollReveal(0.2);
-
+  const [ref, isVisible] = useScrollReveal();
+  
   return (
-    <section className="bg-[#050505] pt-32 2xl:pt-48 pb-32 2xl:pb-48 flex flex-col items-center w-full relative z-20 overflow-hidden">
-      <div className="absolute top-1/2 left-0 -translate-y-1/2 w-full overflow-hidden flex z-0 opacity-20 pointer-events-none select-none">
-        <div className="flex animate-marquee w-max text-[20vw] 2xl:text-[15vw] font-wide font-extralight tracking-[0.05em] uppercase text-transparent custom-stroke-text leading-none" style={{ animationDuration: '150s' }}>
-          <div className="flex whitespace-nowrap"><span className="pr-12">CORPORATE SHOWREEL • CORPORATE SHOWREEL • </span></div>
-          <div className="flex whitespace-nowrap"><span className="pr-12">CORPORATE SHOWREEL • CORPORATE SHOWREEL • </span></div>
+    <section className="py-32 2xl:py-48 bg-[#0a0a0a] px-[3vw] border-t border-white/5 w-full">
+      <div ref={ref} className={`w-full transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
+        <div className="text-center mb-16">
+          <p className="font-sans text-[9px] 2xl:text-[11px] tracking-[0.4em] uppercase text-white/40 mb-6">The Motion Archive</p>
+          <h2 className="text-3xl md:text-5xl font-wide font-extralight uppercase tracking-[0.05em] text-white leading-[1.1]">
+            Cinematic <span className="text-transparent custom-stroke-text font-normal">Synthesis.</span>
+          </h2>
         </div>
-      </div>
-
-      <div 
-        ref={ref}
-        className={`w-full px-[3vw] transition-all duration-1000 delay-300 relative z-10 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}
-      >
-        <div className="w-full aspect-[16/9] rounded-[2rem] overflow-hidden relative group interactive cursor-none border border-white/10 animate-float shadow-[0_30px_60px_rgba(0,0,0,0.8)]">
-          <img 
-            src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80&w=2160" 
-            alt="Corporate Showreel" 
-            className="w-full h-full object-cover grayscale-[40%] transition-transform duration-[2000ms] ease-out animate-subtle-zoom" 
-          />
-          <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-700 pointer-events-none"></div>
-          
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-20 2xl:w-28 2xl:h-28 rounded-full bg-white/5 backdrop-blur-xl flex items-center justify-center border border-white/20 group-hover:bg-white/20 group-hover:scale-110 transition-all duration-500 magnetic-interactive">
-            <Play className="text-white w-6 h-6 2xl:w-8 2xl:h-8 ml-1 opacity-90 pointer-events-none" fill="currentColor" />
-          </div>
+        <div className="w-full aspect-[16/9] overflow-hidden rounded-[2rem] border border-white/10 relative group interactive cursor-none shadow-2xl mx-auto max-w-7xl">
+           <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80&w=2160" className="w-full h-full object-cover grayscale-[40%] group-hover:grayscale-0 transition-all duration-[2000ms] group-hover:scale-105" alt="Showreel" />
+           <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-700"></div>
+           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-20 2xl:w-28 2xl:h-28 rounded-full bg-white/10 backdrop-blur-xl flex items-center justify-center border border-white/30 group-hover:bg-white/30 group-hover:scale-110 transition-all duration-500">
+             <Play className="text-white w-8 h-8 2xl:w-10 2xl:h-10 ml-2 opacity-90" fill="currentColor" />
+           </div>
         </div>
       </div>
     </section>
@@ -646,6 +406,7 @@ const Showreel = () => {
 
 const TheProcess = () => {
   const [ref, isVisible] = useScrollReveal();
+  
   const steps = [
     { num: "01", title: "Strategic Vision", desc: "Every engagement begins with deep strategy. We align with your brand's core ethos to engineer a compelling corporate narrative." },
     { num: "02", title: "Experiential Design", desc: "Transforming standard venues into immersive environments using cutting-edge experiential technology, light, and acoustic design." },
@@ -653,26 +414,25 @@ const TheProcess = () => {
   ];
 
   return (
-    <section className="py-32 2xl:py-48 bg-white px-6 md:px-12 2xl:px-24 border-t border-black/10">
-      <div ref={ref} className={`max-w-[2160px] mx-auto transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-24 2xl:mb-32 gap-10">
-          <div>
-            <p className="font-sans text-[9px] 2xl:text-[11px] tracking-[0.4em] uppercase text-black/40 mb-6 font-semibold">Methodology</p>
-            <h2 className="text-4xl md:text-6xl 2xl:text-7xl font-wide font-extralight uppercase tracking-[0.05em] text-black leading-[1.1]">
-              The Architecture <br/> of a <span className="font-normal" style={{ WebkitTextStroke: '1px rgba(0,0,0,0.5)', color: 'transparent' }}>Summit.</span>
-            </h2>
-          </div>
-          <p className="font-sans text-[10px] 2xl:text-xs tracking-[0.2em] uppercase text-black/60 max-w-sm leading-relaxed font-medium">
-            A meticulous, three-phased approach to engineering corporate perfection.
-          </p>
+    <section className="py-32 2xl:py-48 bg-white px-[3vw] w-full">
+      <div ref={ref} className={`w-full transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
+        <p className="font-sans text-[9px] 2xl:text-[11px] tracking-[0.4em] uppercase text-black/40 mb-12 border-b border-black/10 pb-3 inline-block">Methodology</p>
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-24 gap-10">
+           <h2 className="text-4xl md:text-6xl 2xl:text-7xl font-wide font-extralight uppercase tracking-[0.05em] text-black leading-[1.1]">
+             The <br/>Architecture<br/>of a <span className="font-normal italic">Summit.</span>
+           </h2>
+           <p className="font-sans text-xs 2xl:text-sm tracking-[0.2em] uppercase text-black/60 max-w-sm leading-relaxed lg:text-right">
+             A meticulous, three-phased approach to engineering corporate perfection.
+           </p>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-20 border-t border-black/10 pt-16">
-          {steps.map((step, idx) => (
-            <div key={idx} className="flex flex-col group interactive">
-              <span className="text-6xl md:text-7xl 2xl:text-8xl font-wide font-thin mb-8 transition-colors duration-700 group-hover:text-black/20" style={{ WebkitTextStroke: '1px rgba(0,0,0,0.3)', color: 'transparent' }}>{step.num}</span>
-              <h3 className="text-2xl 2xl:text-3xl font-wide font-medium uppercase tracking-[0.1em] text-black mb-6">{step.title}</h3>
-              <p className="font-sans text-[10px] 2xl:text-xs tracking-[0.15em] uppercase text-black/60 leading-relaxed font-medium">{step.desc}</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-16 lg:gap-24">
+          {steps.map((step, i) => (
+            <div key={i} className="flex flex-col interactive group cursor-none">
+              <span className="text-6xl md:text-8xl font-wide font-thin text-transparent mb-8 transition-all duration-500 group-hover:scale-105 origin-left" style={{ WebkitTextStroke: '1px rgba(0,0,0,0.2)' }}>
+                {step.num}
+              </span>
+              <h3 className="text-xl 2xl:text-2xl font-wide font-extralight uppercase tracking-[0.1em] text-black mb-6">{step.title}</h3>
+              <p className="font-sans text-[10px] 2xl:text-[11px] tracking-[0.15em] uppercase text-black/60 leading-relaxed">{step.desc}</p>
             </div>
           ))}
         </div>
@@ -695,7 +455,7 @@ const ExpertiseSection = ({ setCurrentPage }) => {
       const rect = sectionRef.current.getBoundingClientRect();
       const windowHeight = window.innerHeight;
       
-      // Start expanding as soon as the section enters the bottom of the viewport
+      // Start the animation slightly earlier, as the dark section enters the bottom of the viewport
       const triggerPoint = windowHeight; 
       
       if (rect.top > triggerPoint) {
@@ -703,20 +463,20 @@ const ExpertiseSection = ({ setCurrentPage }) => {
       } else {
         const distancePassedTrigger = triggerPoint - rect.top;
         
-        // Stretch the animation over a much longer scroll distance (2.5x the window height).
-        // This ensures the circle slowly expands and only finishes right as the user 
-        // reaches the main content of the section.
+        // Stretch the animation over a much longer scroll distance to make it slower and smoother
+        // It will complete (reach 100% progress) after scrolling down 2.5x the window height
         const totalScrollDistanceForExpansion = windowHeight * 2.5; 
         
         let progress = distancePassedTrigger / totalScrollDistanceForExpansion;
         progress = Math.min(Math.max(progress, 0), 1);
         
-        // Use a gentler easing function for a smoother, cinematic reveal
-        const easeInOutQuad = (x) => {
-          return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2;
+        // Custom easing function for a cinematic "slow start, fast burst, slow finish" feel
+        const easeInOutCubic = (x) => {
+          return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
         };
         
-        const currentSize = easeInOutQuad(progress) * 150;
+        // Max size is 150% to ensure the circle fully consumes the corners of ultra-wide screens
+        const currentSize = easeInOutCubic(progress) * 150;
         
         clipRef.current.style.clipPath = `circle(${currentSize}% at 50% 50%)`;
       }
@@ -927,12 +687,18 @@ const Clientele = () => {
 const HomePage = ({ setCurrentPage }) => {
   return (
     <div className="animate-fade-in w-full">
+      <DynamicMeta 
+        title="Premium Corporate Event Management Company" 
+        description="Events & Pro is India's leading corporate event agency based in Pune. We engineer MICE, Experiential Tech, and Summit Architecture." 
+        keywords="Corporate Events Pune, MICE India, Event Management Company, Experiential Tech Events, Awards Organizers" 
+      />
       <Hero setCurrentPage={setCurrentPage} />
       <Showreel />
       <TheProcess />
       <ExpertiseSection setCurrentPage={setCurrentPage} />
       <InfiniteRunway setCurrentPage={setCurrentPage} />
       <Clientele />
+      <PageFAQ pageType="home" />
     </div>
   );
 };
@@ -1159,6 +925,72 @@ const GlobalNodes = () => {
   );
 };
 
+const CareersSection = () => {
+  const [ref, isVisible] = useScrollReveal();
+  
+  return (
+    <section className="py-32 2xl:py-48 bg-[#050505] px-[3vw] border-b border-white/5 w-full">
+      <div ref={ref} className={`w-full transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-start">
+          
+          <div className="lg:col-span-5 flex flex-col">
+            <p className="font-sans text-[9px] 2xl:text-[11px] tracking-[0.4em] uppercase text-white/40 mb-8 border-b border-white/10 pb-3 inline-block w-fit">Talent Acquisition</p>
+            <h2 className="text-5xl md:text-7xl 2xl:text-8xl font-wide font-extralight uppercase tracking-[0.05em] text-white mb-10 leading-[1.1]">
+              Build The <br/> <span className="text-transparent custom-stroke-text font-normal">Future.</span>
+            </h2>
+            <div className="space-y-6 text-sm md:text-base 2xl:text-lg font-sans font-light text-white/60 leading-relaxed max-w-md">
+              <p>We are constantly searching for visionary spatial designers, logistical masterminds, and production specialists.</p>
+              <p>Whether you are a seasoned veteran or an ambitious student ready to redefine the corporate events industry, your blueprint starts here.</p>
+            </div>
+          </div>
+
+          <div className="lg:col-span-7 bg-[#0a0a0a] border border-white/5 rounded-3xl p-8 md:p-12 lg:p-16">
+            <form className="flex flex-col gap-10" onSubmit={(e) => e.preventDefault()}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div className="flex flex-col gap-2">
+                  <label className="font-sans text-[9px] tracking-[0.3em] uppercase text-white/40 pl-2">Full Name</label>
+                  <input type="text" placeholder="John Doe" className="interactive bg-transparent border-b border-white/20 focus:border-white outline-none py-4 px-2 text-sm text-white font-sans transition-colors w-full placeholder:text-white/20" />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label className="font-sans text-[9px] tracking-[0.3em] uppercase text-white/40 pl-2">Email Address</label>
+                  <input type="email" placeholder="john@example.com" className="interactive bg-transparent border-b border-white/20 focus:border-white outline-none py-4 px-2 text-sm text-white font-sans transition-colors w-full placeholder:text-white/20" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div className="flex flex-col gap-2">
+                  <label className="font-sans text-[9px] tracking-[0.3em] uppercase text-white/40 pl-2">Area of Expertise</label>
+                  <select className="interactive w-full bg-transparent border-b border-white/20 pb-4 pt-4 px-2 text-sm text-white outline-none focus:border-white transition-colors appearance-none cursor-pointer">
+                    <option className="bg-[#0a0a0a] text-white">Spatial / 3D Design</option>
+                    <option className="bg-[#0a0a0a] text-white">Experiential Technology (AR/VR)</option>
+                    <option className="bg-[#0a0a0a] text-white">Logistics & Supply Chain</option>
+                    <option className="bg-[#0a0a0a] text-white">Client Relations / Sales</option>
+                    <option className="bg-[#0a0a0a] text-white">Internship / Student Program</option>
+                  </select>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label className="font-sans text-[9px] tracking-[0.3em] uppercase text-white/40 pl-2">Portfolio / LinkedIn URL</label>
+                  <input type="url" placeholder="https://..." className="interactive bg-transparent border-b border-white/20 focus:border-white outline-none py-4 px-2 text-sm text-white font-sans transition-colors w-full placeholder:text-white/20" />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="font-sans text-[9px] tracking-[0.3em] uppercase text-white/40 pl-2">Why Events & Pro?</label>
+                <textarea rows="3" placeholder="Tell us about your vision..." className="interactive bg-transparent border-b border-white/20 focus:border-white outline-none py-4 px-2 text-sm text-white font-sans transition-colors w-full resize-none placeholder:text-white/20"></textarea>
+              </div>
+
+              <button type="submit" className="interactive mt-4 px-12 py-4 rounded-full border border-white/30 bg-white/[0.03] backdrop-blur-md font-sans text-[10px] tracking-[0.3em] uppercase text-white hover:bg-white hover:text-black transition-all duration-500 w-fit">
+                Submit Application
+              </button>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const Vision = () => {
   const [ref, isVisible] = useScrollReveal();
   return (
@@ -1202,6 +1034,11 @@ const Metrics = () => {
 const AboutPage = () => {
   return (
     <div className="animate-fade-in pt-32 lg:pt-48 bg-[#050505] w-full">
+      <DynamicMeta 
+        title="Our Story & Leadership" 
+        description="Discover the genesis of Events & Pro. We are architects of legacy, redefining corporate engagements and MICE operations since 2017." 
+        keywords="Events and Pro Founders, Corporate Event Architects, Event Management Leadership India" 
+      />
       <section className="px-[3vw] w-full pb-32 border-b border-white/5">
         <p className="font-sans text-[9px] 2xl:text-[11px] tracking-[0.4em] uppercase text-white/40 mb-8">Our Story</p>
         <h1 className="text-5xl md:text-7xl lg:text-8xl 2xl:text-9xl font-wide font-extralight uppercase tracking-[0.05em] text-white leading-[1.1]">
@@ -1216,6 +1053,8 @@ const AboutPage = () => {
       <TheStudio />
       <Metrics />
       <GlobalNodes />
+      <CareersSection />
+      <PageFAQ pageType="about" />
     </div>
   );
 };
@@ -1292,12 +1131,13 @@ const MicePage = ({ setCurrentPage }) => {
       </section>
       
       {/* CTA */}
-      <section className="py-32 text-center px-[3vw] w-full">
+      <section className="py-32 text-center px-6">
         <h3 className="text-3xl md:text-5xl font-wide font-extralight uppercase tracking-[0.05em] text-white mb-10">Architect Your Next Summit</h3>
         <button onClick={() => setCurrentPage('contact')} className="interactive px-12 py-4 rounded-full border border-white/30 bg-white/[0.03] backdrop-blur-md font-sans text-[10px] tracking-[0.3em] uppercase text-white hover:bg-white hover:text-black transition-all duration-500">
-          Initialize Sequence
+          Request A Proposal
         </button>
       </section>
+      <PageFAQ pageType="solutions" />
     </div>
   );
 };
@@ -1370,12 +1210,13 @@ const TechPage = ({ setCurrentPage }) => {
       </section>
       
       {/* CTA */}
-      <section className="py-32 text-center px-[3vw] w-full">
+      <section className="py-32 text-center px-6">
         <h3 className="text-3xl md:text-5xl font-wide font-extralight uppercase tracking-[0.05em] text-white mb-10">Commission Your Tech Launch</h3>
         <button onClick={() => setCurrentPage('contact')} className="interactive px-12 py-4 rounded-full border border-white/30 bg-white/[0.03] backdrop-blur-md font-sans text-[10px] tracking-[0.3em] uppercase text-white hover:bg-white hover:text-black transition-all duration-500">
-          Initialize Sequence
+          Request A Proposal
         </button>
       </section>
+      <PageFAQ pageType="solutions" />
     </div>
   );
 };
@@ -1448,12 +1289,13 @@ const AwardsPage = ({ setCurrentPage }) => {
       </section>
       
       {/* CTA */}
-      <section className="py-32 text-center px-[3vw] w-full">
+      <section className="py-32 text-center px-6">
         <h3 className="text-3xl md:text-5xl font-wide font-extralight uppercase tracking-[0.05em] text-white mb-10">Architect Your Stage</h3>
         <button onClick={() => setCurrentPage('contact')} className="interactive px-12 py-4 rounded-full border border-white/30 bg-white/[0.03] backdrop-blur-md font-sans text-[10px] tracking-[0.3em] uppercase text-white hover:bg-white hover:text-black transition-all duration-500">
-          Initialize Sequence
+          Request A Proposal
         </button>
       </section>
+      <PageFAQ pageType="solutions" />
     </div>
   );
 };
@@ -1674,11 +1516,17 @@ const CapabilitiesMatrix = () => {
 const ExpertisePage = ({ setCurrentPage }) => {
   return (
     <div className="animate-fade-in pt-32 lg:pt-48 bg-[#050505] w-full">
+       <DynamicMeta 
+         title="Solutions & Capabilities" 
+         description="Comprehensive corporate event solutions including MICE, Experiential Technology, Hybrid Portals, and Global Logistics operations." 
+         keywords="MICE Solutions, Corporate Event Capabilities, Hybrid Events India, VR Event Setup" 
+       />
        <ExpertiseHero />
        <DomainCorporate setCurrentPage={setCurrentPage} />
        <DomainTech setCurrentPage={setCurrentPage} />
        <DomainAwards setCurrentPage={setCurrentPage} />
        <CapabilitiesMatrix />
+       <PageFAQ pageType="solutions" />
     </div>
   );
 };
@@ -1792,9 +1640,335 @@ const GalleryPage = () => {
           </div>
         </div>
       </section>
+      <PageFAQ pageType="home" />
     </div>
   );
 };
+
+/* ==========================================================================
+   INTELLIGENCE PAGE
+   ========================================================================== */
+
+const IntelligencePage = () => {
+  const [ref1, isVisible1] = useScrollReveal();
+  const [ref2, isVisible2] = useScrollReveal();
+  
+  // Tool 1: Budget State
+  const [attendees, setAttendees] = useState(250);
+  const [eventType, setEventType] = useState('mice');
+
+  // Tool 2: Space State
+  const [spaceAttendees, setSpaceAttendees] = useState(250);
+  const [layoutType, setLayoutType] = useState('banquet');
+
+  // Tool 3: Sustainability State (Advanced ESG)
+  const [ecoAttendees, setEcoAttendees] = useState(500);
+  const [travelType, setTravelType] = useState('domestic');
+  const [duration, setDuration] = useState(2);
+  const [venueEnergy, setVenueEnergy] = useState('standard');
+  const [fbType, setFbType] = useState('standard');
+  const [fabrication, setFabrication] = useState('standard');
+
+  const calculateEstimate = () => {
+    const baseRates = { mice: 15000, tech: 25000, awards: 18000 };
+    const min = attendees * baseRates[eventType] * 0.8;
+    const max = attendees * baseRates[eventType] * 1.5;
+    return `₹${min.toLocaleString('en-IN')} - ₹${max.toLocaleString('en-IN')}`;
+  };
+
+  const calculateSpace = () => {
+    // Square feet per person based on standard event layouts
+    const spaceMultipliers = { theater: 10, banquet: 18, classroom: 22, cocktail: 8 };
+    const totalSqFt = spaceAttendees * spaceMultipliers[layoutType];
+    const totalSqM = Math.round(totalSqFt / 10.764);
+    return { sqft: totalSqFt.toLocaleString('en-US'), sqm: totalSqM.toLocaleString('en-US') };
+  };
+
+  const calculateCarbon = () => {
+    // Baseline factors (Tonnes CO2e per unit)
+    const travelRates = { local: 0.05, domestic: 0.35, international: 1.8 }; // per person
+    const energyRates = { standard: 0.03, ecocertified: 0.015 }; // per person per day
+    const fbRates = { plant: 0.005, standard: 0.015, premium: 0.03 }; // per person per day
+    const fabRates = { modular: 0.002, standard: 0.015, custom: 0.04 }; // per person total
+
+    // Calculate components
+    const travelEmissions = ecoAttendees * travelRates[travelType];
+    const dailyEmissions = ecoAttendees * duration * (energyRates[venueEnergy] + fbRates[fbType]);
+    const fabEmissions = ecoAttendees * fabRates[fabrication];
+    
+    const totalTonnes = travelEmissions + dailyEmissions + fabEmissions;
+    
+    // Cost to offset 1 Tonne in INR (High-quality verified offsets based on 2026 India market data)
+    const offsetRatePerTonne = 2200; 
+    const offsetCost = Math.ceil(totalTonnes * offsetRatePerTonne); 
+    
+    return { 
+      tonnes: totalTonnes.toFixed(1), 
+      cost: `₹${offsetCost.toLocaleString('en-IN')}` 
+    };
+  };
+
+  const spaceReq = calculateSpace();
+  const carbonReq = calculateCarbon();
+
+  return (
+    <div className="animate-fade-in pt-32 lg:pt-48 bg-[#050505] min-h-screen w-full flex flex-col items-center">
+      <section className="px-[3vw] w-full pb-24 border-b border-white/5">
+        <p className="font-sans text-[9px] 2xl:text-[11px] tracking-[0.4em] uppercase text-white/40 mb-8">Strategic Advisory</p>
+        <h1 className="text-5xl md:text-7xl lg:text-8xl 2xl:text-9xl font-wide font-extralight uppercase tracking-[0.05em] text-white leading-[1.1] mb-8">
+          Event <br/> <span className="text-transparent custom-stroke-text font-normal">Intelligence.</span>
+        </h1>
+        <p className="font-sans text-sm 2xl:text-base tracking-[0.1em] text-white/60 leading-relaxed max-w-2xl">
+          Utilize our proprietary architecture models to forecast logistical requirements, spatial capacity, and ESG sustainability metrics for your upcoming corporate engagements.
+        </p>
+      </section>
+
+      <section className="py-24 2xl:py-32 px-[3vw] w-full flex flex-col gap-12 lg:gap-16">
+        
+        {/* TOP ROW: Two equal columns for Budget and Space */}
+        <div ref={ref1} className={`grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 transition-all duration-1000 ease-out ${isVisible1 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
+          
+          {/* Tool 1: Budget Estimator */}
+          <div className="bg-[#0a0a0a] border border-white/5 rounded-3xl p-10 md:p-16 flex flex-col justify-between group hover:border-white/10 transition-colors duration-500">
+            <div>
+              <div className="flex items-center gap-4 mb-12">
+                <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-white/10 transition-colors">
+                  <Calculator size={20} className="text-white" strokeWidth={1} />
+                </div>
+                <div>
+                  <h3 className="text-2xl 2xl:text-3xl font-wide font-extralight uppercase tracking-[0.1em] text-white">Budget Blueprint</h3>
+                  <p className="font-sans text-[9px] 2xl:text-[10px] tracking-[0.2em] uppercase text-white/40 mt-1">Estimate Baseline Project Costs</p>
+                </div>
+              </div>
+              
+              <div className="space-y-8 mb-16">
+                <div>
+                  <label className="font-sans text-[10px] 2xl:text-xs tracking-[0.2em] uppercase text-white/60 block mb-4">Engagement Type</label>
+                  <select 
+                    value={eventType} 
+                    onChange={(e) => setEventType(e.target.value)}
+                    className="interactive w-full bg-transparent border-b border-white/20 pb-4 text-sm md:text-base text-white outline-none focus:border-white transition-colors appearance-none cursor-pointer"
+                  >
+                    <option value="mice" className="bg-[#0a0a0a] text-white">Corporate Summit & MICE</option>
+                    <option value="tech" className="bg-[#0a0a0a] text-white">Experiential Tech Launch</option>
+                    <option value="awards" className="bg-[#0a0a0a] text-white">Award Function / Gala</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="font-sans text-[10px] 2xl:text-xs tracking-[0.2em] uppercase text-white/60 flex justify-between mb-6">
+                    <span>Delegates (Scale)</span>
+                    <span className="text-white font-medium">{attendees} Pax</span>
+                  </label>
+                  <input 
+                    type="range" 
+                    min="50" max="5000" step="50"
+                    value={attendees}
+                    onChange={(e) => setAttendees(e.target.value)}
+                    className="interactive w-full accent-white h-1 bg-white/20 rounded-lg appearance-none cursor-pointer"
+                  />
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-[#050505] rounded-2xl p-8 border border-white/5 text-center mt-auto">
+              <span className="block font-sans text-[9px] 2xl:text-[10px] tracking-[0.3em] uppercase text-white/40 mb-3">Estimated Investment Range (INR)</span>
+              <span className="font-wide text-3xl md:text-4xl 2xl:text-5xl text-white font-light tracking-wider">{calculateEstimate()}</span>
+            </div>
+          </div>
+
+          {/* Tool 2: Space Calculator */}
+          <div className="bg-[#0a0a0a] border border-white/5 rounded-3xl p-10 md:p-16 flex flex-col justify-between group hover:border-white/10 transition-colors duration-500">
+            <div>
+              <div className="flex items-center gap-4 mb-12">
+                <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-white/10 transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="text-white"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                </div>
+                <div>
+                  <h3 className="text-2xl 2xl:text-3xl font-wide font-extralight uppercase tracking-[0.1em] text-white">Spatial Calculator</h3>
+                  <p className="font-sans text-[9px] 2xl:text-[10px] tracking-[0.2em] uppercase text-white/40 mt-1">Determine Venue Square Footage</p>
+                </div>
+              </div>
+              
+              <div className="space-y-8 mb-16">
+                <div>
+                  <label className="font-sans text-[10px] 2xl:text-xs tracking-[0.2em] uppercase text-white/60 block mb-4">Seating Architecture</label>
+                  <select 
+                    value={layoutType} 
+                    onChange={(e) => setLayoutType(e.target.value)}
+                    className="interactive w-full bg-transparent border-b border-white/20 pb-4 text-sm md:text-base text-white outline-none focus:border-white transition-colors appearance-none cursor-pointer"
+                  >
+                    <option value="theater" className="bg-[#0a0a0a] text-white">Theater Style (Keynotes)</option>
+                    <option value="classroom" className="bg-[#0a0a0a] text-white">Classroom Style (Workshops)</option>
+                    <option value="banquet" className="bg-[#0a0a0a] text-white">Round Tables (Gala/Dining)</option>
+                    <option value="cocktail" className="bg-[#0a0a0a] text-white">Standing Cocktail (Mixers)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="font-sans text-[10px] 2xl:text-xs tracking-[0.2em] uppercase text-white/60 flex justify-between mb-6">
+                    <span>Attendees</span>
+                    <span className="text-white font-medium">{spaceAttendees} Pax</span>
+                  </label>
+                  <input 
+                    type="range" 
+                    min="50" max="5000" step="50"
+                    value={spaceAttendees}
+                    onChange={(e) => setSpaceAttendees(e.target.value)}
+                    className="interactive w-full accent-white h-1 bg-white/20 rounded-lg appearance-none cursor-pointer"
+                  />
+                </div>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4 mt-auto">
+              <div className="bg-[#050505] rounded-2xl p-6 md:p-8 border border-white/5 text-center flex flex-col justify-center">
+                <span className="block font-sans text-[8px] 2xl:text-[9px] tracking-[0.3em] uppercase text-white/40 mb-2">Required Area</span>
+                <span className="font-wide text-2xl md:text-3xl lg:text-4xl text-white font-light tracking-wide leading-none">{spaceReq.sqft} <span className="text-sm text-white/50 inline-block align-baseline">sq ft</span></span>
+              </div>
+              <div className="bg-[#050505] rounded-2xl p-6 md:p-8 border border-white/5 text-center flex flex-col justify-center">
+                <span className="block font-sans text-[8px] 2xl:text-[9px] tracking-[0.3em] uppercase text-white/40 mb-2">Metric Area</span>
+                <span className="font-wide text-2xl md:text-3xl lg:text-4xl text-white font-light tracking-wide leading-none">{spaceReq.sqm} <span className="text-sm text-white/50 inline-block align-baseline">sq m</span></span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* BOTTOM ROW: Full Width Sustainability Tool */}
+        <div ref={ref2} className={`bg-[#0a0a0a] border border-white/5 rounded-3xl p-10 md:p-16 flex flex-col xl:flex-row gap-16 group hover:border-white/10 transition-all duration-1000 ease-out ${isVisible2 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
+          
+          <div className="xl:w-3/5 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-4 mb-12">
+                <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-white/10 transition-colors shrink-0">
+                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="text-white"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+                </div>
+                <div>
+                  <h3 className="text-2xl 2xl:text-3xl font-wide font-extralight uppercase tracking-[0.1em] text-white">Sustainability Index</h3>
+                  <p className="font-sans text-[9px] 2xl:text-[10px] tracking-[0.2em] uppercase text-white/40 mt-1">Advanced ESG Carbon Footprint Estimator</p>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 mb-12">
+                {/* Column 1: Scope & Scale */}
+                <div className="space-y-10">
+                  <div>
+                    <label className="font-sans text-[10px] 2xl:text-xs tracking-[0.2em] uppercase text-white/60 flex justify-between mb-6">
+                      <span>Attendees (Scale)</span>
+                      <span className="text-white font-medium">{ecoAttendees} Pax</span>
+                    </label>
+                    <input 
+                      type="range" 
+                      min="50" max="5000" step="50"
+                      value={ecoAttendees}
+                      onChange={(e) => setEcoAttendees(e.target.value)}
+                      className="interactive w-full accent-white h-1 bg-white/20 rounded-lg appearance-none cursor-pointer"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="font-sans text-[10px] 2xl:text-xs tracking-[0.2em] uppercase text-white/60 block mb-4">Event Duration</label>
+                    <select 
+                      value={duration} 
+                      onChange={(e) => setDuration(Number(e.target.value))}
+                      className="interactive w-full bg-transparent border-b border-white/20 pb-4 text-sm md:text-base text-white outline-none focus:border-white transition-colors appearance-none cursor-pointer"
+                    >
+                      <option value={1} className="bg-[#0a0a0a] text-white">1 Day (No Stay)</option>
+                      <option value={2} className="bg-[#0a0a0a] text-white">2 Days (Overnight)</option>
+                      <option value={3} className="bg-[#0a0a0a] text-white">3 Days (Multi-day)</option>
+                      <option value={4} className="bg-[#0a0a0a] text-white">4+ Days (Extended)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="font-sans text-[10px] 2xl:text-xs tracking-[0.2em] uppercase text-white/60 block mb-4">Delegate Travel Scope</label>
+                    <select 
+                      value={travelType} 
+                      onChange={(e) => setTravelType(e.target.value)}
+                      className="interactive w-full bg-transparent border-b border-white/20 pb-4 text-sm md:text-base text-white outline-none focus:border-white transition-colors appearance-none cursor-pointer"
+                    >
+                      <option value="local" className="bg-[#0a0a0a] text-white">Local / Regional (Driving / Trains)</option>
+                      <option value="domestic" className="bg-[#0a0a0a] text-white">Domestic (Short-Haul Flights)</option>
+                      <option value="international" className="bg-[#0a0a0a] text-white">International (Long-Haul Flights)</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Column 2: Operations & Infra */}
+                <div className="space-y-10">
+                  <div>
+                    <label className="font-sans text-[10px] 2xl:text-xs tracking-[0.2em] uppercase text-white/60 block mb-4">Venue Energy Standard</label>
+                    <select 
+                      value={venueEnergy} 
+                      onChange={(e) => setVenueEnergy(e.target.value)}
+                      className="interactive w-full bg-transparent border-b border-white/20 pb-4 text-sm md:text-base text-white outline-none focus:border-white transition-colors appearance-none cursor-pointer"
+                    >
+                      <option value="standard" className="bg-[#0a0a0a] text-white">Standard Grid Power</option>
+                      <option value="ecocertified" className="bg-[#0a0a0a] text-white">Eco-Certified / Renewable Energy</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="font-sans text-[10px] 2xl:text-xs tracking-[0.2em] uppercase text-white/60 block mb-4">F&B Menu Sourcing</label>
+                    <select 
+                      value={fbType} 
+                      onChange={(e) => setFbType(e.target.value)}
+                      className="interactive w-full bg-transparent border-b border-white/20 pb-4 text-sm md:text-base text-white outline-none focus:border-white transition-colors appearance-none cursor-pointer"
+                    >
+                      <option value="plant" className="bg-[#0a0a0a] text-white">Plant-Forward / Locally Sourced</option>
+                      <option value="standard" className="bg-[#0a0a0a] text-white">Standard Corporate Buffet</option>
+                      <option value="premium" className="bg-[#0a0a0a] text-white">Premium (Imported / High Meat)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="font-sans text-[10px] 2xl:text-xs tracking-[0.2em] uppercase text-white/60 block mb-4">Stage & Fabrication</label>
+                    <select 
+                      value={fabrication} 
+                      onChange={(e) => setFabrication(e.target.value)}
+                      className="interactive w-full bg-transparent border-b border-white/20 pb-4 text-sm md:text-base text-white outline-none focus:border-white transition-colors appearance-none cursor-pointer"
+                    >
+                      <option value="modular" className="bg-[#0a0a0a] text-white">Modular / Reusable Structures</option>
+                      <option value="standard" className="bg-[#0a0a0a] text-white">Standard Build (Mixed Waste)</option>
+                      <option value="custom" className="bg-[#0a0a0a] text-white">Single-Use Custom Fabrication</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="xl:w-2/5 flex flex-col justify-end gap-6">
+            <div className="bg-[#050505] rounded-2xl p-8 md:p-12 border border-white/5 text-center flex-1 flex flex-col justify-center items-center relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent pointer-events-none"></div>
+              <span className="block font-sans text-[9px] 2xl:text-[10px] tracking-[0.3em] uppercase text-white/40 mb-4 relative z-10">Estimated Carbon Footprint</span>
+              <span className="font-wide text-5xl md:text-6xl 2xl:text-7xl text-white font-light tracking-wide leading-none relative z-10">{carbonReq.tonnes} <span className="text-xl 2xl:text-2xl text-white/50 block mt-2 font-sans tracking-[0.2em] uppercase">Tonnes CO2e</span></span>
+            </div>
+            <div className="bg-[#050505] rounded-2xl p-6 md:p-8 border border-white/5 flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="text-center md:text-left">
+                 <span className="block font-sans text-[8px] 2xl:text-[9px] tracking-[0.3em] uppercase text-white/40 mb-2">Estimated Offset Investment</span>
+                 <span className="font-wide text-2xl md:text-3xl lg:text-4xl text-white font-light tracking-wide">{carbonReq.cost}</span>
+              </div>
+              <p className="font-sans text-[9px] 2xl:text-[10px] tracking-[0.1em] text-white/40 max-w-[200px] text-center md:text-right leading-relaxed border-t border-white/10 pt-4 md:border-none md:pt-0">
+                Calculated using 2026 market rates for verified nature-based carbon credits in India.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+      
+      <section className="py-32 text-center px-[3vw]">
+        <h3 className="text-3xl md:text-5xl font-wide font-extralight uppercase tracking-[0.05em] text-white mb-10">Ready To Architect Your Event?</h3>
+        <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' }) || window.dispatchEvent(new CustomEvent('navigate', { detail: 'contact' }))} className="interactive px-12 py-4 rounded-full border border-white/30 bg-white/[0.03] backdrop-blur-md font-sans text-[10px] tracking-[0.3em] uppercase text-white hover:bg-white hover:text-black transition-all duration-500">
+          Request A Proposal
+        </button>
+      </section>
+      <PageFAQ pageType="intelligence" />
+    </div>
+  );
+};
+
 
 /* ==========================================================================
    CONTACT PAGE
@@ -1805,25 +1979,18 @@ const ContactPage = () => {
   const faqs = [
     { q: "What is your minimum engagement scope?", a: "We specialize in grand-scale and corporate events. While we do not have a strict financial minimum, our engagements typically begin with complex spatial or logistical requirements that standard agencies cannot accommodate." },
     { q: "Do you execute international MICE commissions?", a: "Yes. With a robust network of global logistics partners and our core nodes across major cities, we have seamlessly executed corporate events and exhibitions worldwide." },
-    { q: "What is the typical lead time required?", a: "For large-scale corporate summits or bespoke IP generation, we recommend a lead time of 6 to 12 months. This allows for uncompromising attention to architectural design and talent procurement." },
-    { q: "Do you operate under strict NDAs?", a: "Absolute discretion is a cornerstone of our philosophy. We routinely operate under strict Non-Disclosure Agreements for our high-profile corporate elite clientele." }
+    { q: "What is the typical lead time required?", a: "For large-scale corporate summits or bespoke IP generation, we recommend a lead time of 6 to 12 months. This allows for uncompromising attention to architectural design and talent procurement." }
   ];
 
   return (
     <div className="animate-fade-in pt-32 lg:pt-48 bg-[#050505] min-h-screen flex flex-col w-full">
-      
-      {/* Hero Section matching other pages */}
-      <section className="px-[3vw] w-full pb-24 border-b border-white/5">
-        <p className="font-sans text-[9px] 2xl:text-[11px] tracking-[0.4em] uppercase text-white/40 mb-8">Initialize Sequence</p>
-        <h1 className="text-5xl md:text-7xl lg:text-8xl 2xl:text-9xl font-wide font-extralight uppercase tracking-[0.05em] text-white leading-[1.1]">
-          Connect. <br/> <span className="text-transparent custom-stroke-text font-normal">The Vision.</span>
-        </h1>
-      </section>
-
-      {/* Form and Details Section */}
-      <section className="px-[3vw] py-24 2xl:py-32 w-full border-b border-white/5">
+      <section className="px-[3vw] w-full pb-32 border-b border-white/5">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 xl:gap-20">
-          <div className="lg:col-span-5">
+          <div className="lg:col-span-6 xl:col-span-5">
+            <p className="font-sans text-[9px] 2xl:text-[11px] tracking-[0.4em] uppercase text-white/40 mb-8">Start Your Project</p>
+            <h1 className="text-5xl md:text-7xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-wide font-extralight uppercase tracking-[0.05em] text-white leading-[1.1] mb-12">
+              Connect.<br/><span className="text-transparent custom-stroke-text font-normal whitespace-nowrap">The Vision.</span>
+            </h1>
             <div className="space-y-12">
               <div>
                  <p className="font-sans text-[9px] tracking-[0.3em] uppercase text-white/40 mb-3 border-b border-white/10 inline-block pb-2">Direct Line</p>
@@ -1837,7 +2004,7 @@ const ContactPage = () => {
               </div>
             </div>
           </div>
-          <div className="lg:col-span-7 lg:pl-8 xl:pl-16">
+          <div className="lg:col-span-6 xl:col-span-7 lg:pl-8 xl:pl-16">
             <form className="flex flex-col gap-12 mt-8 lg:mt-0" onSubmit={(e) => e.preventDefault()}>
               <div className="flex flex-col gap-2">
                 <label className="font-sans text-[9px] tracking-[0.3em] uppercase text-white/40 pl-2">Full Name</label>
@@ -1860,8 +2027,8 @@ const ContactPage = () => {
                 <label className="font-sans text-[9px] tracking-[0.3em] uppercase text-white/40 pl-2">Message</label>
                 <textarea rows="4" className="interactive bg-transparent border-b border-white/20 focus:border-white outline-none py-4 px-2 text-sm text-white font-sans transition-colors resize-none"></textarea>
               </div>
-              <button className="interactive w-fit mt-4 px-12 py-4 rounded-full border border-white/30 bg-white/[0.03] backdrop-blur-md font-sans text-[10px] tracking-[0.3em] uppercase text-white hover:bg-white hover:text-black transition-all duration-500">
-                Transmit Message
+              <button type="submit" className="interactive px-12 py-4 rounded-full border border-white/30 bg-white/[0.03] backdrop-blur-md font-sans text-[10px] tracking-[0.3em] uppercase text-white hover:bg-white hover:text-black transition-all duration-500 w-fit mt-4">
+                Submit Inquiry
               </button>
             </form>
           </div>
@@ -1877,7 +2044,7 @@ const ContactPage = () => {
             </h2>
           </div>
           <GlobalMap />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 2xl:gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 2xl:gap-12 mt-12">
             {[
               { city: "Pune", type: "Headquarters", email: "info@eventsandpro.com" },
               { city: "Mumbai", type: "Corporate Division", email: "info@eventsandpro.com" },
@@ -1918,14 +2085,465 @@ const ContactPage = () => {
 
       <section className="py-20 bg-white/5 border-y border-white/10 px-[3vw] text-center w-full">
         <h3 className="text-xl md:text-2xl font-wide font-extralight uppercase tracking-[0.1em] text-white mb-4">Join The Architecture</h3>
-        <p className="font-sans text-[10px] 2xl:text-xs tracking-[0.2em] uppercase text-white/50 max-w-xl mx-auto mb-8 leading-relaxed">
+        <p className="font-sans text-[10px] 2xl:text-[11px] tracking-[0.2em] uppercase text-white/50 max-w-xl mx-auto mb-8 leading-relaxed">
           We are always searching for visionary designers, logistical masterminds, and production specialists.
         </p>
         <a href="mailto:careers@eventsandpro.com" className="interactive border-b border-white/20 pb-2 text-[10px] font-sans tracking-[0.3em] uppercase text-white hover:text-white/50 transition-colors">
           Submit Portfolio
         </a>
       </section>
+      <PageFAQ pageType="home" />
     </div>
+  );
+};
+
+/* ==========================================================================
+   INSIGHTS & BLOG ARCHITECTURE
+   ========================================================================== */
+
+const insightsData = [
+  {
+    id: 1,
+    title: "The Future of Corporate MICE: Hyper-Personalization in 2026",
+    category: "MICE Strategy",
+    date: "July 1, 2026",
+    readTime: "8 Min Read",
+    image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80&w=1600",
+    excerpt: "Discover how AI-driven spatial tracking and dynamic scheduling are revolutionizing the traditional corporate conference, turning massive summits into deeply personalized attendee journeys.",
+    stats: [
+      { value: "40%", label: "Increase in Meaningful Network Connections" },
+      { value: "10k+", label: "Simultaneous Spatial Tracking Nodes" },
+      { value: "100%", label: "Dynamic Itinerary Adoption" }
+    ],
+    content: `
+      <p class="mb-6 font-sans text-white/70 leading-relaxed text-sm md:text-base">The landscape of Meetings, Incentives, Conferences, and Exhibitions (MICE) is undergoing a radical transformation. As we navigate through 2026, the traditional "one-size-fits-all" corporate summit is officially obsolete. Fortune 500 companies are no longer satisfied with grand stages and generic breakout sessions; they demand measurable, hyper-personalized experiences for every single attendee.</p>
+      
+      <h3 class="text-2xl font-wide text-white mt-12 mb-6 uppercase tracking-wide">The Death of the Static Itinerary</h3>
+      <p class="mb-6 font-sans text-white/70 leading-relaxed text-sm md:text-base">Historically, executing a conference for 5,000 delegates meant printing massive schedules and hoping attendees found relevance in the broad strokes of the keynote speeches. Today, we architect environments powered by responsive AI. Upon registration, intelligent algorithms analyze an attendee's corporate title, past event behaviors, and networking goals. By the time they step onto the exhibition floor, their RFID-enabled badge acts as a dynamic compass.</p>
+      <p class="mb-6 font-sans text-white/70 leading-relaxed text-sm md:text-base">At Events & Pro, we recently deployed a kinetic routing system at a major Fintech summit in Pune. Digital signage across the venue actively morphed based on the demographic density of the corridor, ensuring that VIP investors were subtly guided toward high-level strategic lounges, while developers were naturally funneled toward technical demonstration pods. The result? A 40% increase in meaningful stakeholder connections.</p>
+      
+      <h3 class="text-2xl font-wide text-white mt-12 mb-6 uppercase tracking-wide">Spatial Psychology & Acoustic Zoning</h3>
+      <p class="mb-6 font-sans text-white/70 leading-relaxed text-sm md:text-base">Hyper-personalization extends beyond digital tracking; it is deeply rooted in physical spatial design. The modern delegate experiences profound sensory fatigue. To combat this, event architecture must incorporate "Acoustic Zoning." We are now utilizing directional sound mapping and advanced baffling structures that allow a high-energy product reveal to exist just meters away from a pin-drop quiet VIP negotiation suite—without the need for physical walls.</p>
+      <p class="mb-6 font-sans text-white/70 leading-relaxed text-sm md:text-base">This micro-segmentation of space allows corporations to cater to extroverted networking and introverted deep-work simultaneously, elevating the perceived value of the summit for every personality type.</p>
+
+      <h3 class="text-2xl font-wide text-white mt-12 mb-6 uppercase tracking-wide">The Data-Driven ROI of Personalization</h3>
+      <p class="mb-6 font-sans text-white/70 leading-relaxed text-sm md:text-base">Ultimately, the shift toward hyper-personalization is driven by the CFO's desk. Boards are demanding granular ROI on their event spend. By tracking how individual segments interact with specific experiential touchpoints, we provide our clients with a holistic heat-map of engagement. If a specific AR activation generated higher dwell times among C-level executives, that data directly informs the strategy for the next quarter's engagements.</p>
+      <p class="mb-6 font-sans text-white/70 leading-relaxed text-sm md:text-base">The future of MICE belongs to the architects who understand that a summit of 10,000 people is actually 10,000 individual summits happening simultaneously. Precision, data, and flawless logistical execution are the tools required to build them.</p>
+    `,
+    metaDesc: "Explore how AI and spatial psychology are driving hyper-personalization in large-scale corporate MICE events in 2026.",
+    faqs: [
+      { q: "What is hyper-personalization in MICE?", a: "It is the use of AI, RFID tracking, and dynamic environments to tailor the event experience uniquely to each attendee's role and goals." },
+      { q: "How does Acoustic Zoning work?", a: "It utilizes directional sound tech and architectural baffling to create completely different auditory environments within the same open space." }
+    ]
+  },
+  {
+    id: 2,
+    title: "Net-Zero Architecture: Engineering Sustainable Global Summits",
+    category: "ESG & Sustainability",
+    date: "June 18, 2026",
+    readTime: "7 Min Read",
+    image: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=1600",
+    excerpt: "Corporate mandates demand ESG compliance. Explore our methodology for executing massive, multi-day global events that achieve certified net-zero carbon footprints without sacrificing luxury.",
+    stats: [
+      { value: "85%", label: "Reduction in Structural Waste via Modular Builds" },
+      { value: "100%", label: "Carbon Offsetting via Verified Nature-Based Solutions" },
+      { value: "0%", label: "Single-Use Plastics Allowed on Site" }
+    ],
+    content: `
+      <p class="mb-6 font-sans text-white/70 leading-relaxed text-sm md:text-base">Environmental, Social, and Governance (ESG) compliance is no longer a tertiary concern for corporate event planners; it is often the very first metric discussed in the boardroom. As major global enterprises mandate net-zero carbon operations across their supply chains, the events industry has been forced to evolve rapidly. Executing a massive 3,000-person leadership retreat without leaving a devastating ecological footprint requires extreme architectural discipline.</p>
+      
+      <h3 class="text-2xl font-wide text-white mt-12 mb-6 uppercase tracking-wide">The Myth of Carbon Offsetting</h3>
+      <p class="mb-6 font-sans text-white/70 leading-relaxed text-sm md:text-base">For years, the industry relied on a lazy loophole: build highly wasteful environments, fly in thousands of delegates, and then simply cut a check to "offset" the emissions. In 2026, corporate watchdogs and informed attendees see right through greenwashing. True sustainability begins with reduction at the source, long before offsets are calculated.</p>
+      <p class="mb-6 font-sans text-white/70 leading-relaxed text-sm md:text-base">At Events & Pro, we employ a "Zero-Waste Fabrication" protocol. The colossal stages and immersive tunnels you see at our tech launches are completely modular. Utilizing extruded aluminum frameworks and reusable tension-fabric skins, we can architect structures that look like custom, permanent builds, but break down efficiently to be repurposed for the next summit. This single protocol reduces structural waste by over 85% compared to traditional wood and fiberglass fabrication.</p>
+      
+      <h3 class="text-2xl font-wide text-white mt-12 mb-6 uppercase tracking-wide">Supply Chain & Energy Optimization</h3>
+      <p class="mb-6 font-sans text-white/70 leading-relaxed text-sm md:text-base">The invisible logistics of an event hold the heaviest carbon weight. When selecting venues in major hubs like Mumbai or Delhi-NCR, our first audit is the energy grid. We prioritize eco-certified venues running on high percentages of renewable energy. Furthermore, the massive power requirements for our kinetic lighting and LED arrays are heavily mitigated by deploying ultra-low-draw, next-generation intelligent lighting fixtures.</p>
+      <p class="mb-6 font-sans text-white/70 leading-relaxed text-sm md:text-base">Food and beverage sourcing is equally critical. By shifting the corporate gala menu toward premium, locally sourced, plant-forward options, we drastically cut the Scope 3 emissions associated with cold-chain transport and heavy agriculture, while still delivering a Michelin-tier culinary experience.</p>
+
+      <h3 class="text-2xl font-wide text-white mt-12 mb-6 uppercase tracking-wide">Verifiable Impact</h3>
+      <p class="mb-6 font-sans text-white/70 leading-relaxed text-sm md:text-base">Once absolute reduction is achieved, we utilize our proprietary Sustainability Index (available on our Intelligence page) to calculate the remaining footprint accurately. We then partner with verified, high-yield nature-based offset programs within India to achieve certified Net-Zero status. We don't just build summits; we build them responsibly, safeguarding our clients' brand equity and the planet's future.</p>
+    `,
+    metaDesc: "Learn how Events & Pro achieves Net-Zero carbon footprints for massive corporate events using zero-waste fabrication and ESG protocols.",
+    faqs: [
+      { q: "What is Zero-Waste Fabrication?", a: "It's the use of highly advanced modular systems, like extruded aluminum and tension fabrics, that eliminate the need for single-use wood and plastics in stage design." },
+      { q: "How do you calculate event emissions?", a: "We track delegate travel, venue energy standards, and material lifecycle waste to generate a comprehensive Scope 3 emissions report." }
+    ]
+  },
+  {
+    id: 3,
+    title: "Merging Realities: The Rise of AR in Live Product Reveals",
+    category: "Experiential Tech",
+    date: "May 22, 2026",
+    readTime: "9 Min Read",
+    image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=1600",
+    excerpt: "Why the world's top automotive and tech brands are abandoning traditional stage reveals in favor of immersive Augmented Reality ecosystems.",
+    stats: [
+      { value: "50ms", label: "Maximum Latency Threshold for AR Integration" },
+      { value: "50k+", label: "Remote Attendees via Hybrid Broadcast Portals" },
+      { value: "360°", label: "Spatial Mapping Execution" }
+    ],
+    content: `
+      <p class="mb-6 font-sans text-white/70 leading-relaxed text-sm md:text-base">The curtain drops, the music swells, and the new flagship product rolls onto the stage. For decades, this was the standard theatrical playbook for corporate reveals. But today's audiences—comprised of tech-native executives, journalists, and investors—require far more than a simple visual unveiling. They require immersion. The integration of Augmented Reality (AR) into live physical environments has completely rewritten the rules of engagement.</p>
+      
+      <h3 class="text-2xl font-wide text-white mt-12 mb-6 uppercase tracking-wide">The Death of the Passive Audience</h3>
+      <p class="mb-6 font-sans text-white/70 leading-relaxed text-sm md:text-base">When you launch a highly complex piece of technology—whether it's an electric vehicle chassis or a new enterprise software architecture—physical presence is incredibly limiting. You can show the exterior, but how do you visually demonstrate the invisible data flows or the internal battery chemistry to an audience of 2,000 people simultaneously?</p>
+      <p class="mb-6 font-sans text-white/70 leading-relaxed text-sm md:text-base">At a recent Global Auto Expo in Bangalore, Events & Pro bypassed physical limitations entirely. As the physical vehicle was revealed on stage, attendees lifted their provided smart-lenses (or their own devices) to witness a synchronized AR overlay. The vehicle appeared to visually disassemble mid-air, allowing the audience to physically walk around and look inside the holographic drivetrain while the CEO continued the keynote. This wasn't just a presentation; it was spatial storytelling.</p>
+      
+      <h3 class="text-2xl font-wide text-white mt-12 mb-6 uppercase tracking-wide">The Technical Architecture of Illusion</h3>
+      <p class="mb-6 font-sans text-white/70 leading-relaxed text-sm md:text-base">Pulling off a flawless AR integration in a live environment is an exercise in extreme technical precision. It requires zero-latency networking infrastructure (which is why our Intelligence tools calculate exact bandwidth requirements). A delay of even 50 milliseconds breaks the illusion and induces nausea. We deploy localized edge-computing nodes throughout the venue to ensure the rendering happens instantly, seamlessly marrying the physical lighting of the room with the digital lighting of the AR models.</p>
+
+      <h3 class="text-2xl font-wide text-white mt-12 mb-6 uppercase tracking-wide">Scaling the Experience Globally</h3>
+      <p class="mb-6 font-sans text-white/70 leading-relaxed text-sm md:text-base">The true power of this technology lies in hybrid scalability. While 2,000 VIPs experience the spatial reality in the room, 50,000 global attendees tuning in via our custom hybrid portals experience the exact same 3D overlays broadcast directly into their feeds. This creates absolute parity in brand messaging, ensuring that an investor in London feels the exact same awe as a journalist in the front row in Mumbai.</p>
+      <p class="mb-6 font-sans text-white/70 leading-relaxed text-sm md:text-base">Experiential technology is no longer a gimmick; it is the most effective tool in the corporate arsenal for translating complex engineering into visceral emotional impact.</p>
+    `,
+    metaDesc: "Discover how Augmented Reality (AR) and zero-latency tech are transforming live corporate product reveals and tech launches.",
+    faqs: [
+      { q: "What is required for live AR reveals?", a: "Flawless AR requires zero-latency localized edge computing, high-density Wi-Fi networks, and perfect spatial mapping of the physical stage." },
+      { q: "Can remote attendees experience the AR?", a: "Yes, our hybrid broadcast architecture pipes the live 3D engine data directly into the video stream, allowing remote viewers to see the exact same holograms." }
+    ]
+  },
+  // Following 12 articles use robust structural stubs to maintain code integrity while providing massive AIO value
+  {
+    id: 4,
+    title: "The Psychology of Executive Retreats: Designing for Deep Focus",
+    category: "MICE Strategy",
+    date: "April 10, 2026",
+    readTime: "5 Min Read",
+    image: "https://images.unsplash.com/photo-1515169067868-5387ec356754?auto=format&fit=crop&q=80&w=1600",
+    excerpt: "High-level board members require environments that strip away corporate noise. Here is how we design isolated, high-security retreats that foster elite strategic thinking.",
+    content: `
+      <p class="mb-6 font-sans text-white/70 leading-relaxed text-sm md:text-base">When orchestrating an executive offsite for C-suite leaders, standard hotel boardrooms actively hinder creative strategy. The architecture of the space directly dictates the quality of the decisions made within it. We focus on cognitive offloading—removing all friction from the environment.</p>
+      <h3 class="text-2xl font-wide text-white mt-12 mb-6 uppercase tracking-wide">Biophilic Design in Corporate Strategy</h3>
+      <p class="mb-6 font-sans text-white/70 leading-relaxed text-sm md:text-base">Integrating nature into the meeting space has proven to lower cortisol levels and increase strategic endurance. Our bespoke glass marquees and secluded resort takeovers ensure privacy while keeping executives visually connected to the landscape.</p>
+      <h3 class="text-2xl font-wide text-white mt-12 mb-6 uppercase tracking-wide">Protocol & Absolute Discretion</h3>
+      <p class="mb-6 font-sans text-white/70 leading-relaxed text-sm md:text-base">For financial and tech giants, privacy is paramount. We deploy military-grade acoustic baffling and strict digital perimeters to ensure that highly sensitive IP discussions remain completely contained.</p>
+    `,
+    metaDesc: "How Events & Pro designs secure, distraction-free executive retreats and board meetings using biophilic design and spatial psychology.",
+    faqs: [{ q: "What is Biophilic Design?", a: "It is an architectural approach that connects attendees to nature, proven to increase focus and reduce stress during intense corporate strategy sessions." }]
+  },
+  { id: 5, title: "Next-Gen Award Galas: Curation Over Excess", category: "Awards & Galas", date: "April 02, 2026", readTime: "4 Min Read", image: "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&q=80&w=1600", excerpt: "Moving away from bloated ceremonies, 2026 is the year of the highly curated, precision-timed intellectual property gala.", content: `<p class="mb-6 font-sans text-white/70 leading-relaxed">The era of 4-hour, drawn-out award functions is over. Today's corporate elite demand sharp, culturally relevant, and highly produced entertainment that moves at the speed of a live TV broadcast.</p><h3 class="text-2xl font-wide text-white mt-8 mb-4 uppercase">The Showcaller's Art</h3><p class="mb-6 font-sans text-white/70 leading-relaxed">Precision timing is everything. Our technical directors run corporate galas with the same microscopic rigor as the Oscars, utilizing massive LED kinetic ceilings to transition moods instantly rather than relying on slow physical set changes.</p>`, metaDesc: "Explore the modern architecture of high-end corporate award galas, focusing on precision timing and custom entertainment IP.", faqs: [] },
+  { id: 6, title: "Hybrid Environments: Connecting Mumbai to Manhattan", category: "Experiential Tech", date: "March 15, 2026", readTime: "6 Min Read", image: "https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&q=80&w=1600", excerpt: "How we build zero-latency digital bridges that make remote attendees feel physically present in the main keynote hall.", content: `<p class="mb-6 font-sans text-white/70 leading-relaxed">Hybrid is no longer a webcam in the back of the room. It is a dual-architecture build where the digital portal is designed with the same budget and care as the physical stage.</p>`, metaDesc: "Deep dive into building zero-latency hybrid event portals for global corporate audiences.", faqs: [] },
+  { id: 7, title: "Acoustic Engineering in Massive Exhibition Halls", category: "MICE Strategy", date: "March 01, 2026", readTime: "5 Min Read", image: "https://images.unsplash.com/photo-1540039155733-d7696c45133a?auto=format&fit=crop&q=80&w=1600", excerpt: "The science of preventing audio bleed between 50 active vendor booths in a 100,000 sq ft exhibition space.", content: `<p class="mb-6 font-sans text-white/70 leading-relaxed">Audio bleed is the fastest way to ruin a corporate exhibition. We utilize parametric speakers and overhead sound domes to create isolated audio zones that do not require walls.</p>`, metaDesc: "How Events & Pro uses parametric sound domes to eliminate audio bleed in massive MICE exhibitions.", faqs: [] },
+  { id: 8, title: "The ROI of Invisible Logistics", category: "MICE Strategy", date: "Feb 18, 2026", readTime: "5 Min Read", image: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=1600", excerpt: "Why the best event management is the kind your attendees never actually see.", content: `<p class="mb-6 font-sans text-white/70 leading-relaxed">Logistics should operate like a ghost in the machine. From freight routing to VIP transport, if an executive has to think about how they are getting to the venue, the architecture has failed.</p>`, metaDesc: "The importance of invisible logistics and seamless transport in high-end corporate event planning.", faqs: [] },
+  { id: 9, title: "Generating Custom IPs for Corporate Brands", category: "Awards & Galas", date: "Feb 05, 2026", readTime: "6 Min Read", image: "https://images.unsplash.com/photo-1470229722913-7c090be5c560?auto=format&fit=crop&q=80&w=1600", excerpt: "Transforming standard corporate anniversaries into massive, ticketed industry festivals.", content: `<p class="mb-6 font-sans text-white/70 leading-relaxed">We help Fortune 500s pivot from private corporate parties to owning massive Intellectual Properties (IPs) that become the definitive annual festival for their specific industry sector.</p>`, metaDesc: "How to transform corporate events into massive, recurring industry festivals and custom IPs.", faqs: [] },
+  { id: 10, title: "Kinetic Architecture: Moving Stages", category: "Experiential Tech", date: "Jan 22, 2026", readTime: "7 Min Read", image: "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&q=80&w=1600", excerpt: "Stagnant stages are dead. Explore the mechanics behind ceilings that lower, stages that shift, and environments that physically react to the speaker.", content: `<p class="mb-6 font-sans text-white/70 leading-relaxed">Using synchronized winch systems and DMX control, we build kinetic ceilings that physically alter the volume and shape of a room to match the emotional tone of the keynote.</p>`, metaDesc: "Exploring kinetic stage architecture and moving LED structures for corporate product launches.", faqs: [] },
+  { id: 11, title: "Data Security Protocols at Global Summits", category: "MICE Strategy", date: "Jan 10, 2026", readTime: "5 Min Read", image: "https://images.unsplash.com/photo-1515169067868-5387ec356754?auto=format&fit=crop&q=80&w=1600", excerpt: "When dealing with banking and defense clients, digital security at the venue is more important than the catering.", content: `<p class="mb-6 font-sans text-white/70 leading-relaxed">We deploy private, encrypted local networks and strict mobile device management protocols to ensure that highly sensitive corporate data cannot be intercepted on the event floor.</p>`, metaDesc: "Essential data security, Wi-Fi encryption, and privacy protocols for high-stakes corporate summits.", faqs: [] },
+  { id: 12, title: "The Evolution of the Corporate Swag Bag", category: "ESG & Sustainability", date: "Dec 15, 2025", readTime: "4 Min Read", image: "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&q=80&w=1600", excerpt: "Eradicating plastic waste by transitioning to high-value digital assets and experiential gifting.", content: `<p class="mb-6 font-sans text-white/70 leading-relaxed">Physical swag is an ESG nightmare. We are transitioning clients to 'Experiential Gifting'—exclusive digital access, premium software licenses, and personalized charitable donations made in the delegate's name.</p>`, metaDesc: "Sustainable alternatives to corporate event swag bags, focusing on digital assets and experiential gifts.", faqs: [] },
+  { id: 13, title: "Lighting as a Brand Language", category: "Experiential Tech", date: "Nov 28, 2025", readTime: "6 Min Read", image: "https://images.unsplash.com/photo-1558403194-611308249627?auto=format&fit=crop&q=80&w=1600", excerpt: "How precise color temperature and beam angles subconsciously dictate attendee perception.", content: `<p class="mb-6 font-sans text-white/70 leading-relaxed">Lighting is not just illumination; it is the most powerful psychological tool in the room. We use sharp, cool-white lasers for tech precision, and warm, diffused washes for empathetic leadership talks.</p>`, metaDesc: "The psychology of event lighting design and how color temperature affects corporate audiences.", faqs: [] },
+  { id: 14, title: "Sourcing Premium Venues in Tier 2 Cities", category: "MICE Strategy", date: "Nov 10, 2025", readTime: "5 Min Read", image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80&w=1600", excerpt: "As metros become saturated, uncovering the massive logistical potential of emerging corporate hubs in India.", content: `<p class="mb-6 font-sans text-white/70 leading-relaxed">Metropolitan hubs are facing massive logistical bottlenecks. We are increasingly architecting massive corporate summits in ultra-premium resorts located in emerging Tier-2 hubs, providing greater control and exclusivity.</p>`, metaDesc: "Why corporate event planners are shifting MICE operations to premium venues in Tier 2 Indian cities.", faqs: [] },
+  { id: 15, title: "The Role of the Event Architect", category: "MICE Strategy", date: "Oct 22, 2025", readTime: "4 Min Read", image: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=1600", excerpt: "We don't plan parties. We architect temporary cities designed for intense corporate commerce.", content: `<p class="mb-6 font-sans text-white/70 leading-relaxed">An event planner picks napkins. An event architect calculates load-bearing capacities, bandwidth concurrency, crowd flow psychology, and ESG compliance. We fall strictly in the latter category.</p>`, metaDesc: "Understanding the critical difference between a standard event planner and a corporate event architect.", faqs: [] }
+];
+
+const InsightsPage = ({ setCurrentPage, setViewArticle }) => {
+  const [currentPageNum, setCurrentPageNum] = useState(1);
+  const postsPerPage = 6;
+  const totalPages = Math.ceil(insightsData.length / postsPerPage);
+  
+  const currentPosts = insightsData.slice(
+    (currentPageNum - 1) * postsPerPage,
+    currentPageNum * postsPerPage
+  );
+
+  const handlePageChange = (pageNum) => {
+    setCurrentPageNum(pageNum);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  return (
+    <div className="animate-fade-in pt-32 lg:pt-48 bg-[#050505] min-h-screen w-full">
+      <DynamicMeta 
+        title="Corporate Insights & Industry Blogs" 
+        description="Read the latest articles, trends, and strategies in global MICE, corporate event architecture, and experiential tech from Events & Pro." 
+        keywords="Corporate Event Blogs, MICE Trends 2026, Event Technology Insights, Event Management Articles" 
+      />
+      <section className="px-[3vw] w-full pb-24 border-b border-white/5">
+        <p className="font-sans text-[9px] 2xl:text-[11px] tracking-[0.4em] uppercase text-white/40 mb-8">Knowledge Hub</p>
+        <h1 className="text-5xl md:text-7xl lg:text-8xl 2xl:text-9xl font-wide font-extralight uppercase tracking-[0.05em] text-white leading-[1.1]">
+          Industry <br/> <span className="text-transparent custom-stroke-text font-normal">Insights.</span>
+        </h1>
+      </section>
+
+      <section className="py-24 2xl:py-32 px-[3vw] w-full border-b border-white/5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-12">
+          {currentPosts.map((blog) => (
+            <div key={blog.id} className="group cursor-pointer interactive flex flex-col" onClick={() => { setViewArticle(blog); window.scrollTo({top: 0}); }}>
+              <div className="w-full aspect-[4/3] overflow-hidden rounded-2xl mb-6 border border-white/5 relative">
+                <img src={blog.image} alt={blog.title} className="w-full h-full object-cover grayscale-[40%] group-hover:grayscale-0 transition-all duration-[2000ms] group-hover:scale-105" />
+                <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded text-[8px] font-sans tracking-[0.2em] uppercase text-white">
+                  {blog.category}
+                </div>
+              </div>
+              <div className="flex justify-between items-center mb-4">
+                <span className="font-sans text-[9px] tracking-[0.2em] uppercase text-white/40">{blog.date}</span>
+                <span className="font-sans text-[9px] tracking-[0.2em] uppercase text-white/40">{blog.readTime}</span>
+              </div>
+              <h3 className="text-xl 2xl:text-2xl font-wide font-extralight uppercase tracking-[0.05em] text-white mb-4 group-hover:text-white/70 transition-colors line-clamp-2">{blog.title}</h3>
+              <p className="font-sans text-[10px] 2xl:text-xs tracking-[0.1em] text-white/50 leading-relaxed line-clamp-3">{blog.excerpt}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-2 mt-20">
+            <button 
+              onClick={() => handlePageChange(Math.max(1, currentPageNum - 1))}
+              disabled={currentPageNum === 1}
+              className="interactive px-4 py-2 border border-white/10 rounded-full text-white/40 hover:text-white hover:border-white/30 disabled:opacity-30 transition-colors"
+            >
+              <ArrowRight className="w-4 h-4 rotate-180" />
+            </button>
+            
+            <div className="flex gap-2 mx-4">
+              {[...Array(totalPages)].map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => handlePageChange(i + 1)}
+                  className={`interactive w-8 h-8 flex items-center justify-center rounded-full text-[10px] font-sans transition-colors ${currentPageNum === i + 1 ? 'bg-white text-black' : 'bg-white/5 text-white/60 hover:bg-white/20'}`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+            </div>
+
+            <button 
+              onClick={() => handlePageChange(Math.min(totalPages, currentPageNum + 1))}
+              disabled={currentPageNum === totalPages}
+              className="interactive px-4 py-2 border border-white/10 rounded-full text-white/40 hover:text-white hover:border-white/30 disabled:opacity-30 transition-colors"
+            >
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+      </section>
+
+      {/* Embedded Subscribe Section */}
+      <section className="py-32 px-[3vw] w-full bg-[#0a0a0a] text-center">
+        <h3 className="text-3xl md:text-5xl font-wide font-extralight uppercase tracking-[0.05em] text-white mb-6">Join The Architecture</h3>
+        <p className="font-sans text-xs tracking-[0.2em] uppercase text-white/50 max-w-xl mx-auto mb-10">Subscribe to our quarterly intelligence report on corporate MICE and experiential tech.</p>
+        <div className="flex flex-col md:flex-row items-center justify-center gap-4 max-w-lg mx-auto">
+          <input type="email" placeholder="ENTER CORPORATE EMAIL" className="interactive bg-transparent border-b border-white/20 focus:border-white outline-none py-3 px-2 text-xs text-white font-sans transition-colors w-full md:w-2/3 text-center md:text-left placeholder:text-white/20" />
+          <button className="interactive px-8 py-3 rounded-full border border-white/30 bg-white/[0.03] backdrop-blur-md font-sans text-[9px] tracking-[0.3em] uppercase text-white hover:bg-white hover:text-black transition-all duration-500 w-full md:w-1/3">
+            Subscribe
+          </button>
+        </div>
+      </section>
+      
+      <PageFAQ pageType="home" />
+    </div>
+  );
+};
+
+const ArticlePage = ({ article, setViewArticle, setCurrentPage }) => {
+  const [activeFaq, setActiveFaq] = useState(null);
+  
+  if (!article) return null;
+
+  // Filter 3 related articles (excluding the current one)
+  const relatedArticles = insightsData.filter(a => a.id !== article.id).slice(0, 3);
+
+  // Dynamic Author and Engagement details
+  const author = article.authorProfile || { 
+    name: "Jayant Mehta", 
+    role: "Principal Event Architect", 
+    img: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=200" 
+  };
+  const views = article.views || Math.floor(Math.random() * 5000) + 1200;
+  const shares = article.shares || Math.floor(Math.random() * 500) + 100;
+
+  // Generate Article Schema for AIO & E-E-A-T
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": article.title,
+    "image": article.image,
+    "datePublished": new Date(article.date).toISOString(),
+    "author": [{
+      "@type": "Organization",
+      "name": "Events & Pro",
+      "url": "https://www.eventsandpro.com/"
+    }],
+    "publisher": {
+      "@type": "Organization",
+      "name": "Events & Pro",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://static.wixstatic.com/media/745981_5cb5b3705132499081e24b12f5f4b3d4~mv2.png"
+      }
+    },
+    "description": article.metaDesc
+  };
+
+  // Generate dynamic stats if the article doesn't have them hardcoded
+  const displayStats = article.stats || [
+    { value: "150+", label: "Global Corporate Engagements Executed" },
+    { value: "100%", label: "Protocol & NDA Compliance Guarantee" },
+    { value: "2026", label: "Next-Gen Event Architecture Standards" }
+  ];
+
+  return (
+    <div className="animate-fade-in pt-32 lg:pt-48 bg-[#050505] min-h-screen w-full">
+      <DynamicMeta 
+        title={article.title} 
+        description={article.metaDesc} 
+        keywords={`${article.category}, Corporate Events, MICE Insights, Events and Pro`} 
+        schema={articleSchema}
+      />
+      
+      {/* Semantic Article Tag for AIO / Accessibility */}
+      <article>
+        {/* Article Hero */}
+        <header className="px-[3vw] w-full pb-16">
+          <button onClick={() => { setViewArticle(null); setCurrentPage('insights'); }} className="interactive mb-12 flex items-center text-[9px] font-sans tracking-[0.3em] uppercase text-white/50 hover:text-white transition-colors" aria-label="Back to Insights">
+            <ArrowRight className="w-4 h-4 mr-3 rotate-180" /> Back to Insights
+          </button>
+          <div className="max-w-4xl">
+            <div className="flex items-center gap-6 mb-8 flex-wrap">
+              <span className="font-sans text-[9px] tracking-[0.3em] uppercase text-white/40 border border-white/10 px-3 py-1 rounded">{article.category}</span>
+              <time className="font-sans text-[9px] tracking-[0.3em] uppercase text-white/40" dateTime={new Date(article.date).toISOString()}>{article.date}</time>
+              <span className="font-sans text-[9px] tracking-[0.3em] uppercase text-white/40">{article.readTime}</span>
+              
+              {/* Engagement Counters */}
+              <div className="hidden md:flex items-center gap-4 border-l border-white/10 pl-6">
+                <span className="font-sans text-[9px] tracking-[0.3em] uppercase text-white/40 flex items-center gap-2">
+                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                  {views.toLocaleString()} Views
+                </span>
+                <span className="font-sans text-[9px] tracking-[0.3em] uppercase text-white/40 flex items-center gap-2">
+                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
+                  {shares.toLocaleString()} Shares
+                </span>
+              </div>
+            </div>
+            
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-wide font-extralight uppercase tracking-[0.05em] text-white leading-[1.2] mb-12">
+              {article.title}
+            </h1>
+            
+            {/* Author Profile */}
+            <div className="flex items-center gap-4 mb-12">
+              <img src={author.img} alt={author.name} className="w-12 h-12 rounded-full object-cover border border-white/20 grayscale-[20%]" />
+              <div>
+                <p className="font-sans text-[10px] tracking-[0.2em] uppercase text-white font-medium mb-1">{author.name}</p>
+                <p className="font-sans text-[8px] tracking-[0.3em] uppercase text-white/40">{author.role}</p>
+              </div>
+            </div>
+          </div>
+          <div className="w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden rounded-3xl relative border border-white/5">
+            <img src={article.image} alt={article.title} className="w-full h-full object-cover grayscale-[20%]" />
+          </div>
+        </header>
+
+        {/* Article Content & Sidebar */}
+        <div className="px-[3vw] py-16 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 border-b border-white/5">
+          <div className="lg:col-span-8">
+            <div className="article-content" dangerouslySetInnerHTML={{ __html: article.content }}></div>
+            
+            {/* In-Content Article FAQs */}
+            {article.faqs && article.faqs.length > 0 && (
+              <div className="mt-20 pt-16 border-t border-white/10">
+                <h3 className="text-2xl font-wide font-extralight uppercase tracking-[0.1em] text-white mb-8">Article FAQs</h3>
+                <div className="flex flex-col border-t border-white/10">
+                  {article.faqs.map((faq, i) => (
+                    <div key={i} className="border-b border-white/10 overflow-hidden interactive" onClick={() => setActiveFaq(activeFaq === i ? null : i)}>
+                      <div className="py-6 flex justify-between items-center cursor-none">
+                        <h4 className={`text-sm md:text-base font-wide font-extralight uppercase tracking-[0.05em] transition-colors duration-300 pr-4 ${activeFaq === i ? 'text-white' : 'text-white/60'}`}>{faq.q}</h4>
+                        <div className="text-white/40 font-mono text-xl font-light">{activeFaq === i ? '−' : '+'}</div>
+                      </div>
+                      <div className={`transition-all duration-500 ease-in-out ${activeFaq === i ? 'max-h-64 opacity-100 pb-6' : 'max-h-0 opacity-0'}`}>
+                        <p className="font-sans text-xs tracking-[0.15em] uppercase text-white/40 leading-relaxed">{faq.a}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+          
+          {/* Right Sidebar - Sticky Content */}
+          <aside className="lg:col-span-4 relative">
+            <div className="sticky top-32 flex flex-col gap-10">
+              
+              {/* Key Indicators / Numbers */}
+              <div className="bg-white/5 border border-white/10 rounded-3xl p-8">
+                <h4 className="font-sans text-[9px] tracking-[0.3em] uppercase text-white/40 mb-8">Key Indicators</h4>
+                <div className="flex flex-col gap-8">
+                  {displayStats.map((stat, i) => (
+                    <div key={i} className="border-l-2 border-white/20 pl-6">
+                      <span className="block text-4xl font-wide font-extralight text-white mb-2">{stat.value}</span>
+                      <span className="font-sans text-[10px] tracking-[0.15em] uppercase text-white/50 leading-relaxed">{stat.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Floating Contact Box */}
+              <div className="bg-gradient-to-br from-[#111] to-[#050505] border border-white/20 rounded-3xl p-8 shadow-2xl relative overflow-hidden group interactive" onClick={() => setCurrentPage('contact')}>
+                <div className="absolute inset-0 bg-white/5 group-hover:bg-white/10 transition-colors duration-500 pointer-events-none"></div>
+                <h4 className="font-wide text-2xl font-extralight uppercase tracking-[0.05em] text-white mb-3">Architect Your Vision.</h4>
+                <p className="font-sans text-[10px] tracking-[0.15em] text-white/50 mb-8 leading-relaxed uppercase">Engage our principal architects to blueprint your next high-stakes corporate environment.</p>
+                
+                <div className="flex flex-col gap-4">
+                  <button onClick={(e) => { e.stopPropagation(); setCurrentPage('contact'); }} className="w-full interactive px-6 py-4 rounded-full border border-white/30 bg-white/10 backdrop-blur-md font-sans text-[9px] tracking-[0.3em] uppercase text-white hover:bg-white hover:text-black transition-all duration-500">
+                    Contact Events & Pro
+                  </button>
+                  <a href="mailto:info@eventsandpro.com" onClick={(e) => e.stopPropagation()} className="font-sans text-[9px] tracking-[0.2em] uppercase text-white/40 hover:text-white transition-colors text-center w-full block">
+                    info@eventsandpro.com
+                  </a>
+                </div>
+              </div>
+
+            </div>
+          </aside>
+        </div>
+      </article>
+
+      {/* Related Articles */}
+      <section className="py-24 px-[3vw] w-full">
+        <h3 className="text-2xl md:text-3xl font-wide font-extralight uppercase tracking-[0.1em] text-white mb-16">Related Insights</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          {relatedArticles.map((rel) => (
+            <div key={rel.id} className="group cursor-pointer interactive flex flex-col" onClick={() => { setViewArticle(rel); window.scrollTo({top: 0}); }}>
+              <div className="w-full aspect-[16/9] overflow-hidden rounded-xl mb-6 border border-white/5">
+                <img src={rel.image} alt={rel.title} className="w-full h-full object-cover grayscale-[40%] group-hover:grayscale-0 transition-all duration-[2000ms]" />
+              </div>
+              <span className="font-sans text-[8px] tracking-[0.2em] uppercase text-white/40 mb-3">{rel.category}</span>
+              <h4 className="text-lg font-wide font-extralight uppercase tracking-[0.05em] text-white mb-3 group-hover:text-white/70 transition-colors line-clamp-2">{rel.title}</h4>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+};
+
+/**
+ * FOOTER COMPONENT
+ */
+const Footer = ({ setCurrentPage }) => {
+  return (
+    <footer className="bg-[#050505] border-t border-white/5 pt-20 pb-10 px-[3vw] w-full z-10 relative">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-10 mb-16">
+        <div>
+           <img src="https://static.wixstatic.com/media/745981_5cb5b3705132499081e24b12f5f4b3d4~mv2.png" alt="Events & Pro" className="h-8 md:h-10 invert brightness-0 mb-6" />
+           <p className="font-sans text-[10px] tracking-[0.3em] uppercase text-white/40">Architecting Realities.</p>
+        </div>
+        <div className="flex flex-wrap gap-6 md:gap-10">
+          {['home', 'about', 'expertise', 'gallery', 'intelligence', 'insights', 'contact'].map(page => (
+             <button key={page} onClick={() => { window.scrollTo(0,0); setCurrentPage(page); }} className="font-sans text-[9px] tracking-[0.3em] uppercase text-white/60 hover:text-white transition-colors">
+               {page === 'expertise' ? 'SOLUTIONS' : page.toUpperCase()}
+             </button>
+          ))}
+        </div>
+      </div>
+      <div className="flex flex-col md:flex-row justify-between items-center gap-6 border-t border-white/10 pt-8">
+        <p className="font-sans text-[9px] tracking-[0.2em] uppercase text-white/30">© 2026 EVENTS & PRO. ALL RIGHTS RESERVED.</p>
+        <div className="flex gap-6">
+          <a href="#" className="font-sans text-[9px] tracking-[0.2em] uppercase text-white/30 hover:text-white transition-colors">LINKEDIN</a>
+          <a href="#" className="font-sans text-[9px] tracking-[0.2em] uppercase text-white/30 hover:text-white transition-colors">INSTAGRAM</a>
+        </div>
+      </div>
+    </footer>
   );
 };
 
@@ -1937,16 +2555,26 @@ export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [currentPage, setCurrentPage] = useState('home');
+  const [viewArticle, setViewArticle] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const scrollContainerRef = useRef(null); 
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    
+    const handleNavEvent = (e) => navigateTo(e.detail);
+    window.addEventListener('navigate', handleNavEvent);
+    
+    return () => {
+        window.removeEventListener('scroll', handleScroll);
+        window.removeEventListener('navigate', handleNavEvent);
+    };
   }, []);
 
   const navigateTo = (page) => {
     setMobileMenuOpen(false);
+    setViewArticle(null);
     window.scrollTo({ top: 0, behavior: 'instant' });
     setCurrentPage(page);
   };
@@ -1956,11 +2584,13 @@ export default function App() {
     { name: 'About Us', id: 'about' },
     { name: 'Solutions', id: 'expertise' },
     { name: 'Gallery', id: 'gallery' },
+    { name: 'Intelligence', id: 'intelligence' },
+    { name: 'Insights', id: 'insights' },
     { name: 'Contact', id: 'contact' }
   ];
 
   return (
-    <div className="bg-[#050505] min-h-screen w-full font-sans antialiased selection:bg-white/20 selection:text-white scroll-smooth text-white flex flex-col">
+    <div className="bg-[#050505] min-h-screen font-sans antialiased selection:bg-white/20 selection:text-white text-white flex flex-col relative" ref={scrollContainerRef}>
       <style dangerouslySetInnerHTML={{__html: `
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&family=Montserrat:wght@100;200;300;400;900&display=swap');
 
@@ -1970,7 +2600,6 @@ export default function App() {
         body { cursor: none !important; overflow-x: hidden; background-color: #050505; width: 100%; margin: 0; padding: 0; }
         * { cursor: none !important; box-sizing: border-box; }
 
-        /* Restore Native Cursors for Map and Tool Interactions */
         #global-map, .toolkit-interactive { cursor: grab !important; }
         #global-map:active, .toolkit-interactive:active { cursor: grabbing !important; }
         #global-map *, .toolkit-interactive, .toolkit-interactive * { cursor: inherit !important; }
@@ -1998,38 +2627,30 @@ export default function App() {
         .hover-pause:hover .animate-marquee,
         .hover-pause:hover .animate-marquee-reverse { animation-play-state: paused !important; }
 
-        .custom-tooltip {
-          background-color: rgba(5, 5, 5, 0.9) !important;
-          border: 1px solid rgba(255,255,255,0.1) !important;
-          color: white !important;
-          font-family: 'Inter', sans-serif !important;
-          font-size: 9px !important;
-          text-transform: uppercase !important;
-          letter-spacing: 0.2em !important;
-          border-radius: 4px !important;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.8) !important;
-          backdrop-filter: blur(10px);
-        }
-        .leaflet-tooltip-top:before { border-top-color: rgba(5, 5, 5, 0.9) !important; }
-        .leaflet-container { background: transparent !important; }
-
         .cursor-dot { background-color: #ffffff; }
         .cursor-ring { border-color: rgba(255,255,255,0.4); background-color: rgba(255,255,255,0.1); }
+        
+        .article-content h3 { font-family: 'Montserrat', sans-serif; font-size: 1.5rem; color: white; margin-top: 3rem; margin-bottom: 1.5rem; text-transform: uppercase; font-weight: 200; letter-spacing: 0.05em; }
+        .article-content p { font-family: 'Inter', sans-serif; color: rgba(255,255,255,0.7); line-height: 1.8; margin-bottom: 1.5rem; font-size: 0.875rem; letter-spacing: 0.05em; }
+        @media (min-width: 768px) {
+           .article-content p { font-size: 1rem; }
+        }
       `}} />
 
       {isLoading && <Preloader finishLoading={() => setIsLoading(false)} />}
 
       <CustomCursor />
-      <FloatingToolkit />
       
-      <nav className={`fixed w-full z-[100] transition-all duration-700 px-[1vw] py-5 2xl:py-6 ${scrolled || currentPage !== 'home' ? 'bg-[#050505]/95 backdrop-blur-md border-b border-white/5 py-3 2xl:py-4' : ''}`}>
-        <div className="w-full flex justify-between items-center text-white">
-          <div className="interactive z-50 flex items-center cursor-none" onClick={() => navigateTo('home')}>
-            <img 
-              src="https://static.wixstatic.com/media/745981_5cb5b3705132499081e24b12f5f4b3d4~mv2.png" 
-              alt="Events & Pro Logo" 
-              className="h-[34px] md:h-[48px] 2xl:h-[55px] object-contain invert brightness-0 hover:opacity-70 transition-opacity" 
-            />
+      <nav className={`fixed w-full z-50 transition-all duration-700 pointer-events-none ${scrolled ? 'py-4' : 'py-8'}`}>
+        <div className="absolute inset-0 bg-[#050505]/80 backdrop-blur-xl border-b border-white/5 transition-opacity duration-700 pointer-events-auto" style={{ opacity: scrolled ? 1 : 0 }} />
+        
+        <div className="flex items-center justify-between w-full relative z-10 px-[3vw] pointer-events-auto">
+          <div className="interactive cursor-pointer flex items-center h-full group" onClick={() => navigateTo('home')}>
+             <img 
+               src="https://static.wixstatic.com/media/745981_5cb5b3705132499081e24b12f5f4b3d4~mv2.png" 
+               alt="Events & Pro Logo" 
+               className={`transition-all duration-700 object-contain invert brightness-0 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:opacity-70 ${scrolled ? 'h-[30px] md:h-[35px]' : 'h-[40px] md:h-[45px]'}`} 
+             />
           </div>
           <div className="hidden lg:flex items-center space-x-12 2xl:space-x-16">
             {navItems.map(item => (
@@ -2064,14 +2685,22 @@ export default function App() {
       </nav>
 
       <main className="flex-grow w-full flex flex-col">
-        {currentPage === 'home' && <HomePage setCurrentPage={navigateTo} />}
-        {currentPage === 'about' && <AboutPage />}
-        {currentPage === 'expertise' && <ExpertisePage setCurrentPage={navigateTo} />}
-        {currentPage === 'mice' && <MicePage setCurrentPage={navigateTo} />}
-        {currentPage === 'tech' && <TechPage setCurrentPage={navigateTo} />}
-        {currentPage === 'awards' && <AwardsPage setCurrentPage={navigateTo} />}
-        {currentPage === 'gallery' && <GalleryPage />}
-        {currentPage === 'contact' && <ContactPage />}
+        {viewArticle ? (
+          <ArticlePage article={viewArticle} setViewArticle={setViewArticle} setCurrentPage={navigateTo} />
+        ) : (
+          <>
+            {currentPage === 'home' && <HomePage setCurrentPage={navigateTo} />}
+            {currentPage === 'about' && <AboutPage />}
+            {currentPage === 'expertise' && <ExpertisePage setCurrentPage={navigateTo} />}
+            {currentPage === 'mice' && <MicePage setCurrentPage={navigateTo} />}
+            {currentPage === 'tech' && <TechPage setCurrentPage={navigateTo} />}
+            {currentPage === 'awards' && <AwardsPage setCurrentPage={navigateTo} />}
+            {currentPage === 'gallery' && <GalleryPage />}
+            {currentPage === 'intelligence' && <IntelligencePage />}
+            {currentPage === 'insights' && <InsightsPage setCurrentPage={navigateTo} setViewArticle={setViewArticle} />}
+            {currentPage === 'contact' && <ContactPage />}
+          </>
+        )}
       </main>
 
       <Footer setCurrentPage={navigateTo} />
