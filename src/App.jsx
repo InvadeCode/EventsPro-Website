@@ -224,36 +224,93 @@ const PageFAQ = ({ pageType }) => {
  * GLOBAL MAP COMPONENT
  */
 const GlobalMap = () => {
-return (
-  <div className="w-full aspect-[16/9] lg:aspect-[21/9] bg-[#0a0a0a] rounded-3xl border border-white/5 relative overflow-hidden group interactive mb-12 shadow-2xl">
-    <div className="absolute inset-0 flex items-center justify-center opacity-40 group-hover:opacity-70 transition-opacity duration-1000">
-       <svg width="100%" height="100%" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid slice" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="800" height="400" fill="transparent" />
-          
-          <circle cx="280" cy="180" r="2.5" fill="#ffffff" />
-          <circle cx="280" cy="180" r="10" stroke="#ffffff" strokeWidth="0.5" className="animate-ping" style={{animationDuration: '3s'}} />
-          
-          <circle cx="580" cy="140" r="2.5" fill="#ffffff" />
-          <circle cx="580" cy="140" r="10" stroke="#ffffff" strokeWidth="0.5" className="animate-ping" style={{animationDuration: '3s', animationDelay: '1s'}} />
-          
-          <circle cx="620" cy="190" r="2.5" fill="#ffffff" />
-          <circle cx="620" cy="190" r="10" stroke="#ffffff" strokeWidth="0.5" className="animate-ping" style={{animationDuration: '3s', animationDelay: '0.5s'}} />
-          
-          <circle cx="450" cy="100" r="2.5" fill="#ffffff" />
-          <circle cx="450" cy="100" r="10" stroke="#ffffff" strokeWidth="0.5" className="animate-ping" style={{animationDuration: '3s', animationDelay: '1.5s'}} />
-          
-          <path d="M280 180 Q 430 80 580 140" stroke="rgba(255,255,255,0.15)" strokeWidth="1" strokeDasharray="4 4" />
-          <path d="M580 140 Q 600 165 620 190" stroke="rgba(255,255,255,0.15)" strokeWidth="1" strokeDasharray="4 4" />
-          <path d="M450 100 Q 515 120 580 140" stroke="rgba(255,255,255,0.15)" strokeWidth="1" strokeDasharray="4 4" />
-          <path d="M280 180 Q 365 140 450 100" stroke="rgba(255,255,255,0.15)" strokeWidth="1" strokeDasharray="4 4" />
-       </svg>
+  const mapRef = useRef(null);
+
+  useEffect(() => {
+    // Dynamically load Leaflet for the interactive map
+    const initMap = () => {
+      if (!window.L || mapRef.current) return;
+      
+      const map = window.L.map('global-map', {
+        center: [20, 78], 
+        zoom: 3, 
+        zoomControl: false,
+        attributionControl: false,
+        scrollWheelZoom: false,
+        dragging: true
+      });
+      mapRef.current = map;
+
+      // Premium Dark Matter theme
+      window.L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
+        subdomains: 'abcd',
+        maxZoom: 20
+      }).addTo(map);
+
+      const nodes = [
+        { name: 'Pune (HQ)', coords: [18.5204, 73.8567], type: 'Corporate Headquarters' },
+        { name: 'Mumbai', coords: [19.0760, 72.8777], type: 'Corporate Division' },
+        { name: 'Delhi-NCR', coords: [28.7041, 77.1025], type: 'MICE Division' },
+        { name: 'London', coords: [51.5074, -0.1278], type: 'European Operations' },
+        { name: 'Dubai', coords: [25.2048, 55.2708], type: 'Middle East Hub' },
+        { name: 'Singapore', coords: [1.3521, 103.8198], type: 'APAC Tech Hub' }
+      ];
+
+      nodes.forEach(node => {
+        const marker = window.L.circleMarker(node.coords, {
+          radius: 6,
+          fillColor: "#ffffff",
+          color: "#ffffff",
+          weight: 2,
+          opacity: 1,
+          fillOpacity: 0.8
+        }).addTo(map);
+        
+        marker.bindTooltip(`
+          <div style="padding: 10px; background: #050505; border: 1px solid rgba(255,255,255,0.1);">
+            <p style="font-family: 'Inter'; font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em; color: white;">${node.name}</p>
+            <p style="font-family: 'Inter'; font-size: 8px; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.4);">${node.type}</p>
+          </div>
+        `, { className: 'custom-leaflet-tooltip' });
+      });
+    };
+
+    // Load Leaflet Assets
+    if (!document.getElementById('leaflet-css')) {
+      const link = document.createElement('link');
+      link.id = 'leaflet-css';
+      link.rel = 'stylesheet';
+      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+      document.head.appendChild(link);
+    }
+
+    if (!document.getElementById('leaflet-js')) {
+      const script = document.createElement('script');
+      script.id = 'leaflet-js';
+      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+      script.onload = initMap;
+      document.head.appendChild(script);
+    } else {
+      initMap();
+    }
+
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    };
+  }, []);
+
+  return (
+    <div className="w-full h-[500px] rounded-[2rem] overflow-hidden border border-white/5 relative z-10">
+      <style>{`
+        .custom-leaflet-tooltip { background: transparent !important; border: none !important; box-shadow: none !important; }
+        .leaflet-container { background: #050505 !important; }
+      `}</style>
+      <div id="global-map" className="w-full h-full"></div>
     </div>
-    <div className="absolute bottom-8 left-8">
-       <span className="font-sans text-[8px] md:text-[9px] tracking-[0.4em] uppercase text-white/40 block mb-2">Network Status</span>
-       <span className="font-wide text-sm md:text-lg text-white font-light tracking-[0.2em] uppercase">All Nodes Operational</span>
-    </div>
-  </div>
-);
+  );
 };
 
 /* ==========================================================================
